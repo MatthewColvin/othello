@@ -1,5 +1,9 @@
+all:clean archive build
+
+build:game
+
 game: main.o game.o othello.o space.o
-	g++ main.o game.o othello.o space.o -o output
+	g++ main.o game.o othello.o space.o -o game
 
 main.o: main.cpp
 	g++ -c main.cpp
@@ -14,7 +18,7 @@ space.o: space.h space.cpp
 	g++ -c space.cpp
 
 clean:
-	rm *.o game *.tar.gz
+	rm -rf *.o game *.tar.gz
 
 archive:
 	mkdir TMP
