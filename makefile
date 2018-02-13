@@ -1,4 +1,4 @@
-output: main.o game.o othello.o space.o
+game: main.o game.o othello.o space.o
 	g++ main.o game.o othello.o space.o -o output
 
 main.o: main.cpp
@@ -14,5 +14,12 @@ space.o: space.h space.cpp
 	g++ -c space.cpp
 
 clean:
-	rm *.o output
+	rm *.o game *.tar.gz
 
+archive:
+	mkdir TMP
+	cp *.* TMP
+	tar -zcvf Othello_Archive.tar.gz TMP
+	rm -r TMP
+	
+	
