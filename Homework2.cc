@@ -91,6 +91,10 @@ extern "C" void keyboard(unsigned char key, int x, int y){
     break;
 
   case ' ':  // reset values to their defaults
+<<<<<<< HEAD
+=======
+    scene.rotatep=!scene.rotatep;
+>>>>>>> c2c48bdaf278c931f82699c9ac43ebb6e12363b6
 
     scene.incr=0.1;
 
