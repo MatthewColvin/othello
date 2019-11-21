@@ -91,10 +91,6 @@ extern "C" void keyboard(unsigned char key, int x, int y){
     break;
 
   case ' ':  // reset values to their defaults
-<<<<<<< HEAD
-=======
-    scene.rotatep=!scene.rotatep;
->>>>>>> c2c48bdaf278c931f82699c9ac43ebb6e12363b6
 
     scene.incr=0.1;
 
@@ -113,13 +109,13 @@ extern "C" void display(){
 
   mat4 cv = scene.camera.generate_view_matrix();
   
-  glUniformMatrix4fv(scene.camera_view_loc, 1, GL_TRUE, cv);
+  glUniformMatrix4fv(scene.shader.cameraViewMatrix(), 1, GL_TRUE, cv);
 
   mat4  p = Perspective(scene.fovy, scene.aspect, scene.zNear, scene.zFar) ;
 
-  glUniformMatrix4fv(scene.projection_loc, 1, GL_TRUE, p);
+  glUniformMatrix4fv(scene.shader.projectionMatrix(), 1, GL_TRUE, p);
 
-  glUniform1i(scene.shade_loc, false);
+  glUniform1i(scene.shader.isShaded(), false);
 
   // cameras angle about the y axis how you would normally rotate a camera left and right
   stringstream cameraangleiny;
@@ -145,7 +141,7 @@ extern "C" void display(){
     room->draw();
   }
 
-  glUniform1i(scene.shade_loc, true);
+  glUniform1i(scene.shader.isShaded(), true);
   mv = Translate(0, -5.2,0)*RotateX(scene.angle)*Scale(1, 4, 2);
   
   glutSwapBuffers();

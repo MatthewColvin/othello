@@ -4,6 +4,7 @@
 #include "sphere.h"
 #include "camera.h"
 #include "scene.h"
+#include "shader.h"
 
   vector<color4> cubewallcolors1 {
     vec4(1,0,0,1), 
@@ -35,42 +36,36 @@ void Scene::init(){
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
-  // Load shaders and use the resulting shader program
-  GLuint program = InitShader("./Graphics/shaders/vshader41.glsl", "./Graphics/shaders/fshader41.glsl");
-  glUseProgram(program);
+  string fshaderpath = "./Graphics/shaders/fshader41.glsl";
+  string vshaderpath = "./Graphics/shaders/vshader41.glsl";
+
+  shader.init(fshaderpath,vshaderpath);
   
-  model_view_loc = glGetUniformLocation(program, "model_view");
-  camera_view_loc = glGetUniformLocation(program, "camera_view");
-  projection_loc = glGetUniformLocation(program, "projection");
-  shade_loc = glGetUniformLocation(program, "shade");
-  
+
   for (int i=0; i<6; i++){
     rooms.push_back(new cube_door(
     AllVertices,
     AllColors,
     cubecolors[i%2],
-    model_view_loc,
+    shader.modelViewMatrix(),
     AllVertices.size()));
   }
 
   // Now send the data to the GPU
   // set up vertex arrays
-  GLuint vPosition = glGetAttribLocation(program, "vPosition");
-  glEnableVertexAttribArray(vPosition);
+  
+  glEnableVertexAttribArray(shader.VertPosition());
   glVertexAttribPointer(
-    vPosition, 
+    shader.VertPosition(), 
     4, 
     GL_FLOAT, 
     GL_FALSE, 
     0,
 		BUFFER_OFFSET(0)
   );
-
-
-  GLuint vColor = glGetAttribLocation(program, "vColor"); 
-  glEnableVertexAttribArray(vColor);
+  glEnableVertexAttribArray(shader.VertColor());
   glVertexAttribPointer(
-    vColor, 
+    shader.VertColor(), 
     4, 
     GL_FLOAT, 
     GL_FALSE, 
@@ -78,8 +73,6 @@ void Scene::init(){
 		BUFFER_OFFSET(AllVertices.size()*sizeof(vec4))
   );
   
-
-
   glBufferData(
     GL_ARRAY_BUFFER, 
     AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4),

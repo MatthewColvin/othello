@@ -3,7 +3,8 @@
 #include "cube_door.h"
 #include "sphere.h"
 #include "camera.h"
-
+#include "shader.h"
+using std::string;
 // struct shapedata{
 // 	vector<point4> AllVertices;
 // 	vector<color4> AllColors;
@@ -23,17 +24,7 @@ class Scene{
 
 		// Camera and view parameters
 		GLfloat zNear = 0.1;
-		GLfloat zFar = 300.0;
-	
-		const GLfloat dr = 90.0 * DegreesToRadians;
-
-		
-
-		GLint  camera_view_loc;// camera-view matrix uniform shader variable location
-		GLint  model_view_loc; // model-view matrix uniform shader variable locatio
-		GLint  projection_loc; // projection matrix uniform shader variable location
-		GLint  shade_loc;  // shade uniform shader variable location
-
+		GLfloat zFar = 300.0;		
 
 				// Implementing a door that opens by swinging
 		GLfloat doorAngle = 0.0;       // Angle of cube's door's rotation.
@@ -47,12 +38,13 @@ class Scene{
 		vector<cube_door*> rooms;
 
 		Camera camera;
-		
+		Shader shader;
+
 	private:
 		vector<point4> AllVertices;
 		vector<color4> AllColors;
 		vector<norm4> AllNormals;
-
+		
 		
 
 
