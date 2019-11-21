@@ -11,7 +11,7 @@ float stepsize = 0.1;
 float camrotationamount = 0.01;
 // usedd for mouse look around
 int oldx,oldy,deltax,deltay;
-float lookaroundsensetivity=0.008;
+float lookaroundsensetivity=0.0008;
 
 
 extern "C" void display();
@@ -20,6 +20,7 @@ extern "C" void special(int key, int x, int y);
 extern "C" void keyboard(unsigned char key, int x, int y);
 extern "C" void reshape(int width, int height);
 extern "C" void lookaround(int x, int y);
+extern "C" void updatemousexy(int x,int y);
 // Simple animation
 GLint lasttime=0;
 extern "C" void cube2idle(){
@@ -44,8 +45,8 @@ extern "C" void special(int key, int x, int y){
   switch(key) {
   case GLUT_KEY_UP:    scene.camera.turnup(camrotationamount); break;
   case GLUT_KEY_DOWN:  scene.camera.turndown(camrotationamount);    break;
-  case GLUT_KEY_LEFT:    break;
-  case GLUT_KEY_RIGHT:   break;
+  case GLUT_KEY_LEFT:  scene.camera.turnleft(camrotationamount); break;
+  case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
   }
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
@@ -126,9 +127,7 @@ extern "C" void display(){
 
 
   string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
-
-
-   glutSetWindowTitle(newtitle.c_str());
+  glutSetWindowTitle(newtitle.c_str());
 
   mat4 mv = RotateZ(scene.angle);
 
@@ -141,33 +140,39 @@ extern "C" void display(){
     room->draw();
   }
 
+  mv = identity();
+  scene.peicedevelopment->set_mv(mv);
+  scene.peicedevelopment->draw();
+
   glUniform1i(scene.shader.isShaded(), true);
   mv = Translate(0, -5.2,0)*RotateX(scene.angle)*Scale(1, 4, 2);
   
   glutSwapBuffers();
 }
 extern "C" void lookaround(int x, int y){
-  deltax = oldx - x;
-  deltay = oldy -y;
+  deltax = oldx-x;
+  deltay = oldy-y;
   
   if(deltax <= 0){
-    scene.camera.turnleft(-deltax*lookaroundsensetivity);
+    scene.camera.turnleft(deltax*lookaroundsensetivity);
   }else{
-    scene.camera.turnright(deltax*lookaroundsensetivity);
+    scene.camera.turnright(-deltax*lookaroundsensetivity);
   }
-
-
   // Uncomment if you believe you can fly.
   if(deltay <= 0){
-    scene.camera.turndown(deltay*lookaroundsensetivity);
+    scene.camera.turnup(deltay*lookaroundsensetivity);
   }else{
-    scene.camera.turnup(-deltay*lookaroundsensetivity);
+    scene.camera.turndown(-deltay*lookaroundsensetivity);
   }
-
 
   oldx = x;
   oldy = y;
 }
+extern "C" void updatemousexy(int x,int y){
+  oldx = x;
+  oldy = y;
+}
+
 
 int main(int argc, char **argv){
   glutInit(&argc, argv);
@@ -184,7 +189,8 @@ int main(int argc, char **argv){
   glutSpecialFunc(special);
   glutIdleFunc(cube2idle);
   glutReshapeFunc(reshape);
-  glutPassiveMotionFunc(lookaround);
+  glutMotionFunc(lookaround);
+  glutPassiveMotionFunc(updatemousexy);
 
   glutMainLoop();
   return(EXIT_SUCCESS);

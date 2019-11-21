@@ -40,6 +40,8 @@ class Scene{
 		Camera camera;
 		Shader shader;
 
+		sphere* peicedevelopment;
+
 	private:
 		vector<point4> AllVertices;
 		vector<color4> AllColors;

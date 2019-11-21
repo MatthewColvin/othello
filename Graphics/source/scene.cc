@@ -44,12 +44,18 @@ void Scene::init(){
 
   for (int i=0; i<6; i++){
     rooms.push_back(new cube_door(
-    AllVertices,
-    AllColors,
+    AllVertices,AllColors,
     cubecolors[i%2],
     shader.modelViewMatrix(),
     AllVertices.size()));
   }
+
+  peicedevelopment= new sphere(
+    AllVertices,AllColors,AllNormals,
+    vec4(0,0,0,1),shader.modelViewMatrix(),AllVertices.size()
+  );
+
+  
 
   // Now send the data to the GPU
   // set up vertex arrays
