@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "shader.h"
+#include "piece.h"
 
   vector<color4> cubewallcolors1 {
     vec4(1,0,0,1), 
@@ -41,9 +42,9 @@ void Scene::init(){
 
   shader.init(fshaderpath,vshaderpath);
   
-  peicedevelopment= new sphere(
+  peicedevelopment= new Piece(
     AllVertices,AllColors,AllNormals,
-    vec4(0,0,0,1),shader.modelViewMatrix(),AllVertices.size()
+    shader.modelViewMatrix(),AllVertices.size()
   );
 
   // Now send the data to the GPU

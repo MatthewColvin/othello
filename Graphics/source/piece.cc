@@ -16,14 +16,17 @@ Piece::Piece(
 }
 
 void Piece::draw(){
-    
-    mat4 squishedmv = Angel::Scale(scalefactor) * mat4();
-    spheres[0]->set_mv(squishedmv);
+    // Everything is drawn in relation to the Piece modelview
+    spheres[0]->set_mv(
+        mv * Angel::Scale(scalefactor));
     spheres[0]->draw();
     
+    vec3 sphere1scalefactor = vec3(scalefactor.x,scalefactor.y *1.1,scalefactor.z);  
     spheres[1]->set_mv(
-        spheres[0]->get_mv()*Angel::Translate(0,.2,0) * squishedmv 
+        mv * Angel::Translate(0,.05,0) * Angel::Scale(sphere1scalefactor)  
     );
 
+    
     spheres[1]->draw();
+
 }

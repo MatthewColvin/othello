@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef PIECE_H
+#define PIECE_H
 #include "sphere.h"
 #include <vector>
 

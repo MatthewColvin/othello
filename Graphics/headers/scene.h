@@ -4,6 +4,8 @@
 #include "sphere.h"
 #include "camera.h"
 #include "shader.h"
+#include "piece.h"
+
 using std::string;
 // struct shapedata{
 // 	vector<point4> AllVertices;
@@ -35,12 +37,10 @@ class Scene{
 
 		/// end temp public
 
-		vector<cube_door*> rooms;
-
 		Camera camera;
 		Shader shader;
 
-		sphere* peicedevelopment;
+		Piece* peicedevelopment;
 
 	private:
 		vector<point4> AllVertices;
