@@ -6,14 +6,15 @@
 using std::vector;
 
 
-class sphere : protected object
+class sphere : public object
 {
 public:
-  sphere(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<norm4>& globalnormals, color4 color ,GLint nmodel_view ,int nInitial_Point);
-  void set_mv(mat4 nmv){
-    mv=nmv;
-  }
-  void draw(){object::draw();};
+  sphere(
+    vector<point4>& globalpoints,
+    vector<color4>& globalcolors,
+    vector<norm4>& globalnormals, 
+    color4 color ,GLint nmodel_view ,int nInitial_Point
+  );
   
 private:
   const int NumTimesToSubdivide = 5;

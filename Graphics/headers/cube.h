@@ -7,7 +7,7 @@ using std::vector;
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 
-class cube : protected object {
+class cube : public object {
   public:
     cube(
       vector<point4>& globalpoints,
@@ -16,9 +16,7 @@ class cube : protected object {
       GLint shader_mv_loc,
       int startinvao
     );
-    void draw(){object::draw();}
-    void set_mv(mat4 mv){object::set_mv(mv);}
-
+  
   private:
     void makecolorcube(vector<vec4> wallcolors);
     void MyQuad(int a, int b, int c, int d,vec4& color);

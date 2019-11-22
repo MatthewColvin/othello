@@ -5,7 +5,7 @@
 #include "cube.h"
 using std::vector;
 
-class cube_door: protected cube
+class cube_door: public cube
 {
 public:
   cube_door(

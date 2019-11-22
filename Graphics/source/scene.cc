@@ -41,24 +41,12 @@ void Scene::init(){
 
   shader.init(fshaderpath,vshaderpath);
   
-
-  for (int i=0; i<6; i++){
-    rooms.push_back(new cube_door(
-    AllVertices,AllColors,
-    cubecolors[i%2],
-    shader.modelViewMatrix(),
-    AllVertices.size()));
-  }
-
   peicedevelopment= new sphere(
     AllVertices,AllColors,AllNormals,
     vec4(0,0,0,1),shader.modelViewMatrix(),AllVertices.size()
   );
 
-  
-
   // Now send the data to the GPU
-  // set up vertex arrays
   
   glEnableVertexAttribArray(shader.VertPosition());
   glVertexAttribPointer(
@@ -99,7 +87,7 @@ void Scene::init(){
 
   
   glEnable(GL_DEPTH_TEST);
-  glClearColor(1.0, 1.0, 1.0, 1.0); 
+  glClearColor(0.4,0.4,0.4, 1.0); 
 }
 
 //----------------------------------------------------------------------------

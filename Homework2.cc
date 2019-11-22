@@ -15,7 +15,7 @@ float lookaroundsensetivity=0.0008;
 
 
 extern "C" void display();
-extern "C" void cube2idle();
+extern "C" void idleanimation();
 extern "C" void special(int key, int x, int y);
 extern "C" void keyboard(unsigned char key, int x, int y);
 extern "C" void reshape(int width, int height);
@@ -23,30 +23,36 @@ extern "C" void lookaround(int x, int y);
 extern "C" void updatemousexy(int x,int y);
 // Simple animation
 GLint lasttime=0;
-extern "C" void cube2idle(){
-  // Added code to account for glutElapsedTime
+extern "C" void idleanimation(){
   GLint time = glutGet(GLUT_ELAPSED_TIME);
 
-  scene.doorAngle+=scene.doorAngleIncr/1000.0*(time-lasttime);
-  if (scene.doorAngle > 60.0) {
-    scene.doorAngle = 60;
-    scene.doorAngleIncr*=-1.0;
-  }
-  if (scene.doorAngle < 0.0){
-    scene.doorAngle = 0.0;
-    scene.doorAngleIncr*=-1.0;
-  }
+  // cameras angle about the y axis how you would normally rotate a camera left and right
+  stringstream cameraangleiny;
+  cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
+  // camera angle about the x axis rotating the camera up and down
+  stringstream cameraangleinx;
+  cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
+
+
+  string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
+  glutSetWindowTitle(newtitle.c_str());
 
   lasttime=time;
-
   glutPostRedisplay();
 }
 extern "C" void special(int key, int x, int y){
   switch(key) {
-  case GLUT_KEY_UP:    scene.camera.turnup(camrotationamount); break;
-  case GLUT_KEY_DOWN:  scene.camera.turndown(camrotationamount);    break;
-  case GLUT_KEY_LEFT:  scene.camera.turnleft(camrotationamount); break;
-  case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
+  // case GLUT_KEY_UP:    scene.camera.turnup(camrotationamount); break;
+  // case GLUT_KEY_DOWN:  scene.camera.turndown(camrotationamount);    break;
+  // case GLUT_KEY_LEFT:  scene.camera.turnleft(camrotationamount); break;
+  // case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
+  
+  
+  case GLUT_KEY_UP:    scene.peicedevelopment->Translate(0,1,0);   break;  
+  case GLUT_KEY_DOWN:  scene.peicedevelopment->Translate(0,-1,0);   break;   
+  case GLUT_KEY_LEFT:  scene.peicedevelopment->Translate(-1,0,0);   break;   
+  case GLUT_KEY_RIGHT: scene.peicedevelopment->Translate(1,0,0);   break;   
+
   }
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
@@ -107,46 +113,16 @@ extern "C" void reshape(int width, int height){
 }
 extern "C" void display(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  //send Camera matrix to gpu
   mat4 cv = scene.camera.generate_view_matrix();
-  
   glUniformMatrix4fv(scene.shader.cameraViewMatrix(), 1, GL_TRUE, cv);
-
+  //send Prespective matrix to gpu
   mat4  p = Perspective(scene.fovy, scene.aspect, scene.zNear, scene.zFar) ;
-
   glUniformMatrix4fv(scene.shader.projectionMatrix(), 1, GL_TRUE, p);
-
-  glUniform1i(scene.shader.isShaded(), false);
-
-  // cameras angle about the y axis how you would normally rotate a camera left and right
-  stringstream cameraangleiny;
-  cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
-  // camera angle about the x axis rotating the camera up and down
-  stringstream cameraangleinx;
-  cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
-
-
-  string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
-  glutSetWindowTitle(newtitle.c_str());
-
-  mat4 mv = RotateZ(scene.angle);
-
-  mv = Translate(0, 4.2,0)*RotateX(scene.angle)*Scale(2, 4, 6);
-
-  mv = identity(); 
-  for (auto room : scene.rooms){
-    mv *= Translate(2,0,0);
-    room->set_mv(mv);
-    room->draw();
-  }
-
-  mv = identity();
-  scene.peicedevelopment->set_mv(mv);
+  
+  
   scene.peicedevelopment->draw();
 
-  glUniform1i(scene.shader.isShaded(), true);
-  mv = Translate(0, -5.2,0)*RotateX(scene.angle)*Scale(1, 4, 2);
-  
   glutSwapBuffers();
 }
 extern "C" void lookaround(int x, int y){
@@ -187,7 +163,7 @@ int main(int argc, char **argv){
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special);
-  glutIdleFunc(cube2idle);
+  glutIdleFunc(idleanimation);
   glutReshapeFunc(reshape);
   glutMotionFunc(lookaround);
   glutPassiveMotionFunc(updatemousexy);

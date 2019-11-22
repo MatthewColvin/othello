@@ -15,13 +15,19 @@ class object{
         object(vector<point4>& GlobalPoints,vector<color4>& GlobalColors);
         object(vector<point4>& GlobalPoints,vector<color4>& GlobalColors,vector<color4>& GlobalNormals);
         void draw(); // Assumes you are drawing triangle soup 
-        void set_mv(mat4 nmv){mv = nmv;}
-    
+
+        inline void set_mv(mat4 nmv){mv = nmv;}
+        inline mat4 get_mv(){return mv;}
+
+        void Translate(float xamount,float yamount, float zamount);
+        void Rotate(float xradians,float yradians,float zradians);
+        void Scale(float xamount,float yamount, float zamount); 
+
     private:
       
     protected:
-        int StartInVao; // in vao
-        mat4 mv;
+        int StartInVao;
+        mat4 mv = mat4();
         GLint model_view;
         int NumVertices;
 
@@ -31,7 +37,6 @@ class object{
 
         // used to put triangles into the vao to be drawn
         void triangle(point4& a, point4& b, point4& c, vec4 color);
-        
 
 };
 
