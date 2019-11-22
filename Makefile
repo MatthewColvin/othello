@@ -69,7 +69,10 @@ sphere.o: $(headerpth)sphere.h \
 		  $(srcpth)sphere.cc   \
 		  object.o
 	$(CC) $(srcpth)sphere.cc  -c  $(InitHeaders) $(OPTIONS)
-
+piece.o: $(headerpth)piece.h \
+		  $(srcpth)piece.cc   \
+		  object.o
+	$(CC) $(srcpth)piece.cc  -c  $(InitHeaders) $(OPTIONS)
 
 ####################################################################
 
@@ -78,8 +81,9 @@ homework2: object.o    $(headerpth)object.h    \
 		   scene.o     $(headerpth)scene.h     \
 		   sphere.o    $(headerpth)sphere.h    \
 		   cube_door.o $(headerpth)cube_door.h \
-		   camera.o    $(headerpth)camera.h
-	$(CC)  Homework2.cc object.o scene.o cube.o cube_door.o camera.o sphere.o $(InitShader) $(InitHeaders) $(OPTIONS) $(LDLIBS) -o homework2
+		   camera.o    $(headerpth)camera.h    \
+		   piece.o     $(headerpth)piece.h
+	$(CC)  Homework2.cc object.o scene.o piece.o cube.o cube_door.o camera.o sphere.o $(InitShader) $(InitHeaders) $(OPTIONS) $(LDLIBS) -o homework2
 clean:
 	rm -f $(OBJECTS) *.o *~
 squeakyclean: clean

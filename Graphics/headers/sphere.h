@@ -15,7 +15,8 @@ public:
     vector<norm4>& globalnormals, 
     color4 color ,GLint nmodel_view ,int nInitial_Point
   );
-  
+  inline int NumVerts(){return NumVertices;}
+
 private:
   const int NumTimesToSubdivide = 5;
   const int NumTriangles        = 4096;  // (4 faces)^(NumTimesToSubdivide + 1)
