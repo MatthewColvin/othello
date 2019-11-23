@@ -40,7 +40,8 @@ class Scene{
 		Camera camera;
 		Shader shader;
 
-		Piece* peicedevelopment;
+
+		vector<Piece*> pieces;
 
 	private:
 		vector<point4> AllVertices;

@@ -26,3 +26,26 @@ void object::Rotate(float xradians,float yradians,float zradians){
 void object::Scale(float xamount, float yamount, float zamount){
   mv *= Angel::Scale(zamount,yamount,zamount);
 }
+float object::distanceToGoal(){
+  float xdist = (Goalx-x) * (Goalx-x);
+  float ydist = (Goaly-y) * (Goaly-y);
+  float zdist = (Goalz-z) * (Goalz-z);
+
+  return(sqrt(xdist + ydist + zdist));
+}
+vec3 object::get_position(){return vec3(x,y,z);}     
+void object::set_position(vec3 newPosition){
+  x = newPosition.x;
+  y = newPosition.y;
+  z = newPosition.z;
+  Translate(Goalx-x,Goaly-y,Goalz-z);  
+}
+vec3 object::get_goal_position(){return vec3(Goalx,Goaly,Goalz);}
+void object::set_goal_position(vec3 newPosition){
+  if(ismoving){
+    std::cerr << "Watch out seting new location while moving may cause weird effect" << std::endl;
+  } 
+  Goalx = newPosition.x;
+  Goaly = newPosition.y;
+  Goalz = newPosition.z;
+}

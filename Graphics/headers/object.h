@@ -23,16 +23,38 @@ class object{
         void Rotate(float xradians,float yradians,float zradians);
         void Scale(float xamount,float yamount, float zamount); 
 
-        inline vec3 get_position(){return vec3(x,y,z);}
-            inline float getx(){return x;}
-            inline float gety(){return y;} 
-            inline float getz(){return z;}
-        inline void set_position(vec3 newPosition){x = newPosition.x;;;y = newPosition.y;;;z = newPosition.z;}
-            inline void setx(float newx){x = newx;}
-            inline void sety(float newy){y = newy;} 
-            inline void setz(float newz){z = newz;}
+        vec3 get_position();
+            inline float X(){return x;}
+            inline float Y(){return y;} 
+            inline float Z(){return z;}
+        void set_position(vec3 newPosition);
+            inline void setX(float newx){x = newx; }
+            inline void setY(float newy){y = newy; } 
+            inline void setZ(float newz){z = newz; }
+    
+        
+        vec3 get_goal_position();
+            inline float GoalX(){return Goalx;}
+            inline float GoalY(){return Goaly;} 
+            inline float GoalZ(){return Goalz;}
+        void set_goal_position(vec3 newPosition);
+            inline void setGoalx(float newx){x = newx;}
+            inline void setGoaly(float newy){y = newy;} 
+            inline void setGoalz(float newz){z = newz;}
+
+        float distanceToGoal(); 
+
+        float getamounttraveled();
+        void  setamountrtaveled(float amount);
+
+        bool isTraveling(){return ismoving;};
+        float percenttraveled(){return amounttraveled;}
+
     private:
-      
+        float x=0; float y=0; float z=0;
+        float Goalx=0; float Goaly=0; float Goalz=0;
+        float amounttraveled = 0; // value between 0 and 1 used for w in transforms.
+        bool ismoving = false;
     protected:
     
         int StartInVao;
@@ -47,7 +69,7 @@ class object{
         // used to put triangles into the vao to be drawn
         void triangle(point4& a, point4& b, point4& c, vec4 color);
 
-        float x; float y; float z;
+        
 
 };
 

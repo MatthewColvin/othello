@@ -42,11 +42,10 @@ void Scene::init(){
 
   shader.init(fshaderpath,vshaderpath);
   
-  peicedevelopment= new Piece(
+  pieces.push_back(new Piece(
     AllVertices,AllColors,AllNormals,
-    shader.modelViewMatrix(),AllVertices.size()
+    shader.modelViewMatrix(),AllVertices.size())
   );
-
   // Now send the data to the GPU
   
   glEnableVertexAttribArray(shader.VertPosition());

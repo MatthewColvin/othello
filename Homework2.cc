@@ -37,6 +37,13 @@ extern "C" void idleanimation(){
   string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
   glutSetWindowTitle(newtitle.c_str());
 
+ 
+  // for (auto piece :scene.pieces){
+  
+  // }
+
+
+
   lasttime=time;
   glutPostRedisplay();
 }
@@ -48,10 +55,10 @@ extern "C" void special(int key, int x, int y){
   // case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
   
   
-  case GLUT_KEY_UP:    scene.peicedevelopment->Translate(0,1,0);   break;  
-  case GLUT_KEY_DOWN:  scene.peicedevelopment->Translate(0,-1,0);   break;   
-  case GLUT_KEY_LEFT:  scene.peicedevelopment->Translate(-1,0,0);   break;   
-  case GLUT_KEY_RIGHT: scene.peicedevelopment->Translate(1,0,0);   break;   
+  case GLUT_KEY_UP:    scene.pieces[0]->Translate(0,1,0);   break;  
+  case GLUT_KEY_DOWN:  scene.pieces[0]->Translate(0,-1,0);   break;   
+  case GLUT_KEY_LEFT:  scene.pieces[0]->Translate(-1,0,0);   break;   
+  case GLUT_KEY_RIGHT: scene.pieces[0]->Translate(1,0,0);   break;   
 
   }
 }
@@ -121,7 +128,9 @@ extern "C" void display(){
   glUniformMatrix4fv(scene.shader.projectionMatrix(), 1, GL_TRUE, p);
   
   
-  scene.peicedevelopment->draw();
+  for (auto piece : scene.pieces){
+    piece->draw();
+  }
 
   glutSwapBuffers();
 }
