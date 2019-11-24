@@ -24,37 +24,25 @@ class object{
         void Scale(float xamount,float yamount, float zamount); 
 
         vec3 get_position();
-            inline float X(){return x;}
-            inline float Y(){return y;} 
-            inline float Z(){return z;}
         void set_position(vec3 newPosition);
-            inline void setX(float newx){x = newx; }
-            inline void setY(float newy){y = newy; } 
-            inline void setZ(float newz){z = newz; }
-    
-        
         vec3 get_goal_position();
-            inline float GoalX(){return Goalx;}
-            inline float GoalY(){return Goaly;} 
-            inline float GoalZ(){return Goalz;}
         void set_goal_position(vec3 newPosition);
-            inline void setGoalx(float newx){x = newx;}
-            inline void setGoaly(float newy){y = newy;} 
-            inline void setGoalz(float newz){z = newz;}
+        
+        inline float XdistToGoal(){return Goalx - x;}
+        inline float YdistToGoal(){return Goaly - y;}
+        inline float ZdistToGoal(){return Goalz - z;}
 
+        bool isTraveling();
         float distanceToGoal(); 
-
-        float getamounttraveled();
-        void  setamountrtaveled(float amount);
-
-        bool isTraveling(){return ismoving;};
-        float percenttraveled(){return amounttraveled;}
-
+        inline float translationSpeed(){return translationspeed / 10000;}
+        inline void speedUp(int amount){translationspeed += amount;}
+        inline void slowDown(int amount){translationspeed -= amount;}
     private:
         float x=0; float y=0; float z=0;
         float Goalx=0; float Goaly=0; float Goalz=0;
-        float amounttraveled = 0; // value between 0 and 1 used for w in transforms.
-        bool ismoving = false;
+        // object will go to goal if distance is less than this constant
+        float SNAPTODISTANCETOGOAL = .000001; 
+        float translationspeed = 90;
     protected:
     
         int StartInVao;

@@ -24,8 +24,9 @@ extern "C" void updatemousexy(int x,int y);
 // Simple animation
 GLint lasttime=0;
 extern "C" void idleanimation(){
-  GLint time = glutGet(GLUT_ELAPSED_TIME);
-
+  int time = glutGet(GLUT_ELAPSED_TIME);
+  int timefactor = time - lasttime;
+  
   // cameras angle about the y axis how you would normally rotate a camera left and right
   stringstream cameraangleiny;
   cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
@@ -33,16 +34,18 @@ extern "C" void idleanimation(){
   stringstream cameraangleinx;
   cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
 
-
   string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
   glutSetWindowTitle(newtitle.c_str());
-
- 
-  // for (auto piece :scene.pieces){
   
-  // }
+  
+  for (auto p : scene.pieces){
+    mat4 translation = Angel::Translate(p->XdistToGoal(),p->YdistToGoal(),p->ZdistToGoal());
+    vec4 nextpos = translation * vec4(p->get_position() , p->translationSpeed()*timefactor);
 
-
+    if(p->isTraveling()){
+      p->set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
+    }
+  }
 
   lasttime=time;
   glutPostRedisplay();
@@ -53,8 +56,6 @@ extern "C" void special(int key, int x, int y){
   // case GLUT_KEY_DOWN:  scene.camera.turndown(camrotationamount);    break;
   // case GLUT_KEY_LEFT:  scene.camera.turnleft(camrotationamount); break;
   // case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
-  
-  
   case GLUT_KEY_UP:    scene.pieces[0]->Translate(0,1,0);   break;  
   case GLUT_KEY_DOWN:  scene.pieces[0]->Translate(0,-1,0);   break;   
   case GLUT_KEY_LEFT:  scene.pieces[0]->Translate(-1,0,0);   break;   
@@ -89,6 +90,9 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'a': scene.camera.moveright(stepsize); break;
   case 'd': scene.camera.moveleft(stepsize);  break;
 
+
+  case 'o': scene.pieces[0]->slowDown(10); break;
+  case 'O': scene.pieces[0]->speedUp(10); break;
 
   case 'v': 
     scene.fovy-=5; 
