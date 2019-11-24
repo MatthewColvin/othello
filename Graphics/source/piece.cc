@@ -17,12 +17,12 @@ Piece::Piece(
 void Piece::draw(){
     // Everything is drawn in relation to the Piece modelview
     spheres[0]->set_mv(
-        mv * Angel::Scale(scalefactor));
+        get_mv() * Angel::Scale(scalefactor));
     spheres[0]->draw();
     
     vec3 sphere1scalefactor = vec3(scalefactor.x,scalefactor.y *1.1,scalefactor.z);  
     spheres[1]->set_mv(
-        mv * Angel::Translate(0,.05,0) * Angel::Scale(sphere1scalefactor)  
+        get_mv() * Angel::Translate(0,.05,0) * Angel::Scale(sphere1scalefactor)  
     );
     spheres[1]->draw();
 }
