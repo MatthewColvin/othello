@@ -19,7 +19,7 @@ class object{
         object(vector<point4>& GlobalPoints,vector<color4>& GlobalColors,vector<color4>& GlobalNormals);
         void draw(); // Assumes you are drawing triangle soup 
         inline void set_mv(mat4 nmv){mv = nmv;}
-        inline mat4 get_mv(){return mv * translationmatrix ;}
+        inline mat4 get_mv(){return mv * translationmatrix * rotationmatrix ;}
         
         void Translate(float xamount,float yamount, float zamount);
         void Rotate(float xradians,float yradians,float zradians);
@@ -45,7 +45,11 @@ class object{
         // Rotation ////////////////////////
             void set_orientation(vec3 newOrientation);
             void set_goal_orientation(vec3 newOrientation);
-                        
+
+            bool isUnitQuaterian(vec4 q);
+            vec4 getQuaternian(mat4 &R,float radians);
+            vec4 getQuaternian(vec3 Rotationaxis,float radians);
+            mat4 toMatrix(vec4 Quaternian);            
             vec4 getrotationaxis();
             bool isRotating();
             inline float rotationSpeed(){return rotationspeed / 10000;}
@@ -64,8 +68,10 @@ class object{
         // Rotation
             float rotationspeed = 10;
             float SNAPTORADIANGOAL = .000001; 
+            mat4 rotationmatrix;
             vec4 currentQuaternion;
             vec4 goalQuaternion;
+            vec3 currentorentation;
         // Scaling
             mat4 scalematrix;
         // 

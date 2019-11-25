@@ -14,6 +14,35 @@ float camrotationamount = 0.01;
 int oldx,oldy,deltax,deltay;
 float lookaroundsensetivity=0.0008;
 
+bool isUnitQuaterian(vec4 q){
+  if ((q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w) != 1){
+   std::cerr << "watchout quaternians should sum to 1" << std::endl;
+   return false;
+  }
+  return true;
+}
+
+mat4 toMatrix(vec4 Quaternian){
+  if(!isUnitQuaterian(Quaternian)){
+    std::cerr<< "could not convert to rotation matrix because not unit quaterian" << std::endl;
+    return(mat4());
+  }else{
+    float x = Quaternian.x; 
+    float y = Quaternian.y;
+    float z = Quaternian.z;
+    float w = Quaternian.w;
+    // q0 = w // q1 = z // q2 = y // q3 = x
+    mat4 r;
+    r[0][0]= w+z-x-y    ;r[0][1]= 2*(z*y-w*y);r[0][2]=2*(w*y+z*x) ;r[0][3]=0;
+    r[1][0]= 2*(z*y+w*x);r[1][1]= w-z+y-x    ;r[1][2]=2*(y*x-w*z) ;r[1][3]=0;
+    r[2][0]= 2*(z*x-w*y);r[2][1]= 2*(w*z+y*x);r[2][2]=w-z-y+x     ;r[2][3]=0;
+    
+    r[3][0]= 0 ;r[3][1]= 0 ;r[3][2]= 0 ;       r[3][3]= 1;
+
+    return r;
+  }
+}
+
 
 extern "C" void display();
 extern "C" void idleanimation();
@@ -42,10 +71,11 @@ extern "C" void idleanimation(){
   for (auto p : scene.pieces){
     mat4 translation = Angel::Translate(p->XdistToGoal(),p->YdistToGoal(),p->ZdistToGoal());
     vec4 nextpos = translation * vec4(p->get_position() , p->translationSpeed()*timefactor);
+    
     if(p->isTraveling()){
       p->set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
     }
-
+   
   }
 
   lasttime=time;
@@ -84,12 +114,12 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'y': scene.camera.movedown(stepsize); break;
   //
 
-  case 'b': scene.pieces[0]->Rotate(M_PI,0,0); break;
-  case 'B':  break;
-  case 'N':  break;
-  case 'n':  break;
-  case 'M':  break;
-  case 'm':  break;
+  case 'b': scene.pieces[0]->Rotate(10,0,0); break;
+  case 'B': scene.pieces[0]->Rotate(-10,0,0); break;
+  case 'N': scene.pieces[0]->Rotate(0,10,0); break;
+  case 'n': scene.pieces[0]->Rotate(0,-10,0); break;
+  case 'M': scene.pieces[0]->Rotate(0,0,10); break;
+  case 'm': scene.pieces[0]->Rotate(0,0,-10); break;
 
   // standard walking movement
   case 'w': scene.camera.moveforward(stepsize); break;
