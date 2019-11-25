@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 using std::string;
 using std::stringstream;
 using std::setprecision;
@@ -41,10 +42,10 @@ extern "C" void idleanimation(){
   for (auto p : scene.pieces){
     mat4 translation = Angel::Translate(p->XdistToGoal(),p->YdistToGoal(),p->ZdistToGoal());
     vec4 nextpos = translation * vec4(p->get_position() , p->translationSpeed()*timefactor);
-
     if(p->isTraveling()){
       p->set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
     }
+
   }
 
   lasttime=time;
@@ -83,6 +84,12 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'y': scene.camera.movedown(stepsize); break;
   //
 
+  case 'b': scene.pieces[0]->Rotate(M_PI,0,0); break;
+  case 'B':  break;
+  case 'N':  break;
+  case 'n':  break;
+  case 'M':  break;
+  case 'm':  break;
 
   // standard walking movement
   case 'w': scene.camera.moveforward(stepsize); break;
@@ -184,3 +191,5 @@ int main(int argc, char **argv){
   glutMainLoop();
   return(EXIT_SUCCESS);
 }
+
+

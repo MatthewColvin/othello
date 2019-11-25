@@ -16,6 +16,7 @@ Piece::Piece(
 }
 void Piece::draw(){
     // Everything is drawn in relation to the Piece modelview
+    
     spheres[0]->set_mv(
         get_mv() * Angel::Scale(scalefactor));
     spheres[0]->draw();
