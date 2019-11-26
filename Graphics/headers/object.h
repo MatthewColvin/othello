@@ -65,12 +65,33 @@ class object{
 
 
         void update(float translationamountpercall,float rotationamountpercall){
-            mat4 translation = Angel::Translate(XdistToGoal(),YdistToGoal(),ZdistToGoal());
-            vec4 nextpos = translation * vec4(get_position() , translationSpeed()*translationamountpercall);
             if(isTraveling()){
-                set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
+                float percenttotravel = (translationamountpercall/distanceToGoal()) * (translationamountpercall/distanceToGoal());
+                if (percenttotravel >= 1.0){
+                    set_position(get_goal_position());
+                }else{
+                    vec3 nextpos(
+                        x + XdistToGoal()*percenttotravel,
+                        y + YdistToGoal()*percenttotravel, 
+                        z + ZdistToGoal()*percenttotravel);
+
+                    set_position(vec3(nextpos.x,nextpos.y,nextpos.z));
+                }
             }
             if(isRotating()){
+                float percenttorotate = ;
+                if (percenttorotate >= 1.0){
+                    set_orientation(get_goal_orentation());
+                }else{
+                    vec3 nextpos(
+                        currentorientation.x + XdistToGoal()*percenttorotate,
+                        currentorientation.y + YdistToGoal()*percenttorotate, 
+                        currentorientation.z + ZdistToGoal()*percenttorotate);
+
+                    set_position(vec3(nextpos.x,nextpos.y,nextpos.z));
+                }
+                
+                
                 mat4 nextrotatation = get_rotationmatrix() +
                 RotateX(xdegreestogoal() * rotationSpeed()) * 
                 RotateY(ydegreestogoal() * rotationSpeed()) * 
@@ -78,8 +99,9 @@ class object{
                 set_orientation(nextrotatation);
             }
         }
-        void updatewithtime(float translationtimeseed,float rotationamountseed){
-
+        void updatewithtime(float timeseed){
+            float timescale = .005;
+            update(timeseed*timescale,timeseed*timescale);
         }
 
     private:

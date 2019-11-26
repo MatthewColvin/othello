@@ -94,7 +94,8 @@ extern "C" void idleanimation(){
   
   
   for (auto p : scene.pieces){
-    p->update(1,1);
+    //p->update(.15,1);
+    p->updatewithtime(timefactor);
   }
 
   lasttime=time;

@@ -15,6 +15,14 @@ void object::draw(){
   glDrawArrays(GL_TRIANGLES, StartInVao, NumVertices);
 }
 
+float mysqrt(float x){
+  float squareroot = sqrt(abs(x));
+  if(x<0){
+    return(-squareroot);
+  }
+  return(squareroot);
+}
+
 void object::Translate(float xamount,float yamount, float zamount){
   Goalx += xamount;
   Goaly += yamount;
@@ -37,16 +45,9 @@ void object::Translate(float xamount,float yamount, float zamount){
     Goalz = newPosition.z;
   }
   float object::distanceToGoal(){
-    float xdist = (Goalx-x) * (Goalx-x);
-    float ydist = (Goaly-y) * (Goaly-y);
-    float zdist = (Goalz-z) * (Goalz-z);
-
-    return(sqrt(xdist + ydist + zdist));
+    mysqrt(XdistToGoal() + YdistToGoal() + ZdistToGoal());
   }
   bool object::isTraveling(){
-    if(distanceToGoal() < SNAPTODISTANCEGOAL){
-      set_position(get_goal_position());
-    }
     if (x==Goalx && y==Goaly && z==Goalz){
       return false;
     }
