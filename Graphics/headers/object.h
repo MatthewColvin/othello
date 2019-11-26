@@ -22,10 +22,10 @@ class object{
         inline mat4 get_mv(){return mv * translationmatrix * rotationmatrix ;}
         
         void Translate(float xamount,float yamount, float zamount);
-        void Rotate(float xradians,float yradians,float zradians);
+        void Rotate(float xdegrees,float ydegrees,float zdegrees);
         void Scale(float xamount,float yamount, float zamount); 
 
-        // Translation /////////////////////
+        // Translation /////////////////////s
             vec3 get_position();
             void set_position(vec3 newPosition);
             vec3 get_goal_position();
@@ -43,21 +43,47 @@ class object{
         // End Translation /////////////////
 
         // Rotation ////////////////////////
+            inline void set_orientation(mat4 newRotationmatrix){rotationmatrix = newRotationmatrix;};
             void set_orientation(vec3 newOrientation);
             void set_goal_orientation(vec3 newOrientation);
+            inline vec3 get_goal_orentation(){return goalorientation;}
+            void set_orientation(vec4 Quaterian);
+            inline mat4 get_rotationmatrix(){return rotationmatrix;};
 
-            bool isUnitQuaterian(vec4 q);
-            vec4 getQuaternian(mat4 &R,float radians);
-            vec4 getQuaternian(vec3 Rotationaxis,float radians);
-            mat4 toMatrix(vec4 Quaternian);            
-            vec4 getrotationaxis();
+            inline float xdegreestogoal(){return (goalorientation.x - currentorientation.x);};
+            inline float ydegreestogoal(){return (goalorientation.y - currentorientation.y);};
+            inline float zdegreestogoal(){return (goalorientation.z - currentorientation.z);};
+
+            inline vec4 getGoalQuaterian(){return(getQuaternian(goalrotationmatrix));}
+            inline vec4 getCurrentQuaterian(){return(getQuaternian(rotationmatrix));}
+
             bool isRotating();
             inline float rotationSpeed(){return rotationspeed / 10000;}
             inline void speedUpRotation(int amount){rotationspeed += amount;}
             inline void slowDownRotation(int amount){rotationspeed -= amount;}
         // End Rotation ////////////////////
 
+
+        void update(float translationamountpercall,float rotationamountpercall){
+            mat4 translation = Angel::Translate(XdistToGoal(),YdistToGoal(),ZdistToGoal());
+            vec4 nextpos = translation * vec4(get_position() , translationSpeed()*translationamountpercall);
+            if(isTraveling()){
+                set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
+            }
+            if(isRotating()){
+                mat4 nextrotatation = get_rotationmatrix() +
+                RotateX(xdegreestogoal() * rotationSpeed()) * 
+                RotateY(ydegreestogoal() * rotationSpeed()) * 
+                RotateZ(zdegreestogoal() * rotationSpeed());  
+                set_orientation(nextrotatation);
+            }
+        }
+        void updatewithtime(float translationtimeseed,float rotationamountseed){
+
+        }
+
     private:
+        
         // Translation 
             float translationspeed = 10;
             // object will go to goal if distance is less than this constant
@@ -67,11 +93,17 @@ class object{
             mat4 translationmatrix ;
         // Rotation
             float rotationspeed = 10;
-            float SNAPTORADIANGOAL = .000001; 
+            float SNAPTODEGREEGOAL = .000001; 
             mat4 rotationmatrix;
-            vec4 currentQuaternion;
-            vec4 goalQuaternion;
-            vec3 currentorentation;
+            mat4 goalrotationmatrix;
+            vec3 currentorientation;
+            vec3 goalorientation;
+            bool isUnitQuaterian(vec4 q); // only unit Quaterinas are actually rotations
+            vec4 getQuaternian(mat4 &rotationmat)const;
+            vec4 getQuaternian(vec3 Rotationaxis,float radians);
+            mat4 toMatrix(vec4 Quaternian);            
+            vec4 getrotationaxis();
+            vec3 rotationMatrixToEulerAngles(mat4 &R);
         // Scaling
             mat4 scalematrix;
         // 

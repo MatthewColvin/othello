@@ -21,7 +21,6 @@ bool isUnitQuaterian(vec4 q){
   }
   return true;
 }
-
 mat4 toMatrix(vec4 Quaternian){
   if(!isUnitQuaterian(Quaternian)){
     std::cerr<< "could not convert to rotation matrix because not unit quaterian" << std::endl;
@@ -42,7 +41,33 @@ mat4 toMatrix(vec4 Quaternian){
     return r;
   }
 }
+vec4 slerp(vec4 const &q0, vec4 const &q1, double t) {
+      // v0 and v1 should be unit length or else
+      // something broken will happen.
+      normalize(q0);
+      normalize(q1);
+      // Compute the cosine of the angle between the two vectors.
+      double dot = Angel::dot(q0,q1); 
 
+      const double DOT_THRESHOLD = 0.9995;
+      if (dot > DOT_THRESHOLD) {
+          // If the inputs are too close for comfort, linearly interpolate
+          // and normalize the result.
+
+          vec4 result = q0 + t*(q1 - q0);
+          result = normalize(result);
+          return result;
+      }
+      
+      //std::clamp(dot, -1.0, 1.0);           // Robustness: Stay within domain of acos()
+      double theta_0 = acos(dot);  // theta_0 = angle between input vectors
+      double theta = theta_0*t;    // theta = angle between v0 and result 
+
+      vec4 v2 = q1 - q0 * dot;
+      v2 = normalize(v2);             // { v0, v2 } is now an orthonormal basis
+
+      return q0*cos(theta) + v2*sin(theta);
+}
 
 extern "C" void display();
 extern "C" void idleanimation();
@@ -69,13 +94,7 @@ extern "C" void idleanimation(){
   
   
   for (auto p : scene.pieces){
-    mat4 translation = Angel::Translate(p->XdistToGoal(),p->YdistToGoal(),p->ZdistToGoal());
-    vec4 nextpos = translation * vec4(p->get_position() , p->translationSpeed()*timefactor);
-    
-    if(p->isTraveling()){
-      p->set_position(vec3(nextpos.x,nextpos.y,nextpos.z)); 
-    }
-   
+    p->update(1,1);
   }
 
   lasttime=time;
@@ -114,8 +133,8 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'y': scene.camera.movedown(stepsize); break;
   //
 
-  case 'b': scene.pieces[0]->Rotate(10,0,0); break;
-  case 'B': scene.pieces[0]->Rotate(-10,0,0); break;
+  case 'b': scene.pieces[0]->Rotate(-10,0,0); break;
+  case 'B': scene.pieces[0]->Rotate(10,0,0); break;
   case 'N': scene.pieces[0]->Rotate(0,10,0); break;
   case 'n': scene.pieces[0]->Rotate(0,-10,0); break;
   case 'M': scene.pieces[0]->Rotate(0,0,10); break;

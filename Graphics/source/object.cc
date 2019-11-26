@@ -55,23 +55,81 @@ void object::Translate(float xamount,float yamount, float zamount){
 
 
 void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
-  currentorentation.x += xdegrees;
-  currentorentation.y += ydegrees;
-  currentorentation.z += zdegrees;
-  while(currentorentation.x > 360){currentorentation.x -= 360;}  
-  while(currentorentation.y > 360){currentorentation.y -= 360;}
-  while(currentorentation.z > 360){currentorentation.z -= 360;} 
-  
-  while(currentorentation.x < 0){currentorentation.x += 360;}  
-  while(currentorentation.y < 0){currentorentation.y += 360;}
-  while(currentorentation.z < 0){currentorentation.z += 360;}
-
-  rotationmatrix = 
-    RotateX(currentorentation.x)*
-    RotateY(currentorentation.y)*
-    RotateZ(currentorentation.z);
+    goalorientation.x += xdegrees;
+    goalorientation.y += ydegrees;
+    goalorientation.z += zdegrees;
+        
+    while(goalorientation.x >= 360){goalorientation.x -= 360;}  
+    while(goalorientation.y >= 360){goalorientation.y -= 360;}
+    while(goalorientation.z >= 360){goalorientation.z -= 360;} 
+    
+    while(goalorientation.x < 0){goalorientation.x += 360;}  
+    while(goalorientation.y < 0){goalorientation.y += 360;}
+    while(goalorientation.z < 0){goalorientation.z += 360;}
   }
+  bool object::isRotating(){
+    //if xdegrees goal are within 10 degrees.... TODO
+    if(xdegreestogoal() < SNAPTODEGREEGOAL && 
+       ydegreestogoal() < SNAPTODEGREEGOAL && 
+       zdegreestogoal() < SNAPTODEGREEGOAL){
+       set_orientation(get_goal_orentation());
+    }
+    if(
+      currentorientation.x == goalorientation.x &&
+      currentorientation.y == goalorientation.y &&
+      currentorientation.z == goalorientation.z
+    )
+    {return false;}else{return true;}
+  }
+  void object::set_orientation(vec3 neworientaiton){
+    currentorientation = neworientaiton;
+    while(currentorientation.x > 360){currentorientation.x -= 360;}  
+    while(currentorientation.y > 360){currentorientation.y -= 360;}
+    while(currentorientation.z > 360){currentorientation.z -= 360;} 
+    
+    while(currentorientation.x < 0){currentorientation.x += 360;}  
+    while(currentorientation.y < 0){currentorientation.y += 360;}
+    while(currentorientation.z < 0){currentorientation.z += 360;}
 
+    rotationmatrix = 
+      RotateX(currentorientation.x)*
+      RotateY(currentorientation.y)*
+      RotateZ(currentorientation.z);
+  }
+  void object::set_orientation(vec4 Quaterian){
+    rotationmatrix = toMatrix(Quaterian);
+    vec3 angles = rotationMatrixToEulerAngles(rotationmatrix);
+    float TODOtmp = 0;
+    currentorientation.x += TODOtmp;
+    currentorientation.y += TODOtmp;
+    currentorientation.z += TODOtmp;
+    
+    while(currentorientation.x > 360){currentorientation.x -= 360;}  
+    while(currentorientation.y > 360){currentorientation.y -= 360;}
+    while(currentorientation.z > 360){currentorientation.z -= 360;} 
+    
+    while(currentorientation.x < 0){currentorientation.x += 360;}  
+    while(currentorientation.y < 0){currentorientation.y += 360;}
+    while(currentorientation.z < 0){currentorientation.z += 360;}
+  }
+  void object::set_goal_orientation(vec3 newgoalorientaiton){
+    //fix new goal
+    while(goalorientation.x >= 360){goalorientation.x -= 360;}  
+    while(goalorientation.y >= 360){goalorientation.y -= 360;}
+    while(goalorientation.z >= 360){goalorientation.z -= 360;} 
+    
+    while(goalorientation.x < 0){goalorientation.x += 360;}  
+    while(goalorientation.y < 0){goalorientation.y += 360;}
+    while(goalorientation.z < 0){goalorientation.z += 360;}
+    
+    goalorientation = newgoalorientaiton;
+
+    goalrotationmatrix = 
+      RotateX(goalorientation.x)*
+      RotateY(goalorientation.y)*
+      RotateZ(goalorientation.z);
+  }
+  // Private Rotation helpers
   bool object::isUnitQuaterian(vec4 q){
     if ((q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w) != 1){
     std::cerr << "watchout quaternians should sum to 1" << std::endl;
@@ -81,19 +139,51 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
   }
   vec4 object::getQuaternian(vec3 Rotationaxis,float degrees){
     float radians = degrees * DegreesToRadians;
-
     vec4 Quat;
-      Quat.x = Rotationaxis.x * sin(radians/2);
-      Quat.y = Rotationaxis.y * sin(radians/2);
-      Quat.z = Rotationaxis.z * sin(radians/2);
-      Quat.w = cos(radians/2); 
-      if(isUnitQuaterian(Quat)){
-        return Quat;
+    Quat.x = Rotationaxis.x * sin(radians/2);
+    Quat.y = Rotationaxis.y * sin(radians/2);
+    Quat.z = Rotationaxis.z * sin(radians/2);
+    Quat.w = cos(radians/2); 
+    if(isUnitQuaterian(Quat)){
+      return Quat;
+    }
+    else{
+      std::cerr << "did not create unit quaterian from eulerangles" << std::endl;
+      return(vec4(0,0,0,1));
+    }
+  }
+  vec4 object::getQuaternian(mat4 &rotmatrix)const{
+    mat4 a = rotmatrix;
+    float trace = a[0][0] + a[1][1] + a[2][2]; 
+    vec4 quat;
+    if( trace > 0 ) {
+      float s = 0.5f / sqrtf(trace+ 1.0f);
+      quat.w = 0.25f / s;
+      quat.x = ( a[2][1] - a[1][2] ) * s;
+      quat.y = ( a[0][2] - a[2][0] ) * s;
+      quat.z = ( a[1][0] - a[0][1] ) * s;
+    } else {
+      if ( a[0][0] > a[1][1] && a[0][0] > a[2][2] ) {
+        float s = 2.0f * sqrtf( 1.0f + a[0][0] - a[1][1] - a[2][2]);
+        quat.w = (a[2][1] - a[1][2] ) / s;
+        quat.x = 0.25f * s;
+        quat.y = (a[0][1] + a[1][0] ) / s;
+        quat.z = (a[0][2] + a[2][0] ) / s;
+      } else if (a[1][1] > a[2][2]) {
+        float s = 2.0f * sqrtf( 1.0f + a[1][1] - a[0][0] - a[2][2]);
+        quat.w = (a[0][2] - a[2][0] ) / s;
+        quat.x = (a[0][1] + a[1][0] ) / s;
+        quat.y = 0.25f * s;
+        quat.z = (a[1][2] + a[2][1] ) / s;
+      } else {
+        float s = 2.0f * sqrtf( 1.0f + a[2][2] - a[0][0] - a[1][1] );
+        quat.w = (a[1][0] - a[0][1] ) / s;
+        quat.x = (a[0][2] + a[2][0] ) / s;
+        quat.y = (a[1][2] + a[2][1] ) / s;
+        quat.z = 0.25f * s;
       }
-      else{
-        std::cerr << "did not create unit quaterian from eulerangles" << std::endl;
-        return(vec4(0,0,0,1));
-      }
+    }
+    return quat;
   }
   mat4 object::toMatrix(vec4 Quaternian){
     if(!isUnitQuaterian(Quaternian)){
@@ -115,6 +205,7 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       return r;
     }
   }
+
   bool isIdentity(mat4 &R){
     //Checks if diagonal elements are equal to 1 and rest of elements are 0 
     for(int i = 0; i < 4; i++){  
@@ -143,7 +234,7 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       // would need to check if the determinate == 1 
       return true;  
   }
-  vec3 rotationMatrixToEulerAngles(mat4 &R){
+  vec3 object::rotationMatrixToEulerAngles(mat4 &R){
       if(!isRotationMatrix(R)){
         std::cerr<<"Rotation matrix trying to be converted to Euler angel not valid!!"<< std::endl;
       }else{
@@ -169,39 +260,6 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       }  
       return(vec3(1,1,1));
   }
-  vec4 object::getQuaternian(mat4 &R,float degrees){
-      float radians = degrees * DegreesToRadians;
-      vec3 tmp = rotationMatrixToEulerAngles(R);
-      return (getQuaternian(vec3(tmp.x,tmp.y,tmp.z),radians));
-  }
-  vec4 slerp(vec4 const &v0, vec4 const &v1, double t) {
-      // v0 and v1 should be unit length or else
-      // something broken will happen.
-
-      // Compute the cosine of the angle between the two vectors.
-      double dot = Angel::dot(v0,v1); 
-
-      const double DOT_THRESHOLD = 0.9995;
-      if (dot > DOT_THRESHOLD) {
-          // If the inputs are too close for comfort, linearly interpolate
-          // and normalize the result.
-
-          vec4 result = v0 + t*(v1 - v0);
-          result = normalize(result);
-          return result;
-      }
-      
-      //std::clamp(dot, -1.0, 1.0);           // Robustness: Stay within domain of acos()
-      double theta_0 = acos(dot);  // theta_0 = angle between input vectors
-      double theta = theta_0*t;    // theta = angle between v0 and result 
-
-      vec4 v2 = v1 - v0 * dot;
-      v2 = normalize(v2);             // { v0, v2 } is now an orthonormal basis
-
-      return v0*cos(theta) + v2*sin(theta);
-  }
-
-
 
 void object::Scale(float xamount, float yamount, float zamount){
   scalematrix *= Angel::Scale(zamount,yamount,zamount);
