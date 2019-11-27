@@ -89,27 +89,38 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
     set_goal_orientation(goalorientation);
   }
   // Public Rotation /////////////////////////
-    void object::Testeulerangleconversion(){
+    void object::Tests(){
       using std::cout;
       using std::endl;
+      static float roll=5;
+      static float pitch=0;
+      static float yaw=0;
+      bool angleconversiontest = true;
+      bool slerptest = false;
+      if(angleconversiontest){
       cout << "eulerangle -> quaterian -> eulerangle:" << endl;
-      EulerAngles EAtest(80,69,40);
-      cout<< EAtest << endl;
-      Quaternion Qtest = getQuaternian(EAtest*DegreesToRadians);
-      cout << Qtest << endl;
-      EulerAngles EAeq = getEulerAngles(Qtest)/DegreesToRadians;
-      cout << EAeq << endl;
-      cout << "quaterian -> eulerangle -> quaterian  test:" << endl;
-      Quaternion Q1test(0,0,0,1);
-      cout << Q1test << endl;
-      EulerAngles EA1test = getEulerAngles(Q1test);
-      cout << EA1test << endl;
-      Quaternion Q1Eq = getQuaternian(EA1test);
-      cout << Q1Eq << endl;
-
+        EulerAngles EAtest(roll,pitch,yaw);
+        cout<< EAtest << endl;
+        Quaternion Qtest = getQuaternian(EAtest);
+        cout << Qtest << endl;
+        EulerAngles EAeq = getEulerAngles(Qtest);
+        cout << EAeq << endl;
+        roll+=5;
+      }
+      if(slerptest){
+        static float i = .05;
+        EulerAngles e1(0,0,10);
+        EulerAngles e2(0,0,20);
+        Quaternion q1 = getQuaternian(e1);
+        Quaternion q2 = getQuaternian(e2);
+        Quaternion slerpresult = slerp(q1,q2,i);
+        EulerAngles step = getEulerAngles(slerpresult);
+        cout << "Euler Angles -> Quaternion then slerp" << endl;
+        cout << step << endl;
+        i+=.05;
+      }
     }
     void object::set_goal_orientation(EulerAngles newgoalorientaiton){
-        //fix new goal
         goalorientation = newgoalorientaiton;
         while(goalorientation.x >= 360){goalorientation.x -= 360;}  
         while(goalorientation.y >= 360){goalorientation.y -= 360;}
@@ -118,7 +129,8 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
         while(goalorientation.x < 0){goalorientation.x += 360;}  
         while(goalorientation.y < 0){goalorientation.y += 360;}
         while(goalorientation.z < 0){goalorientation.z += 360;}
-        goalori = getQuaternian(goalorientation * DegreesToRadians);
+
+        goalori = getQuaternian(goalorientation);
     }
     void object::set_goal_orientation(double roll, double pitch, double yaw){
       set_goal_orientation(EulerAngles(roll,pitch,yaw));
@@ -188,26 +200,30 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
         return(vec4(0,0,0,1));
       }
     }
-    Quaternion object::getQuaternian(EulerAngles eulerangles){
-      return(getQuaternian(eulerangles.x,eulerangles.y,eulerangles.z));
-                            // yaw (Z), pitch (Y), roll (X)
+    Quaternion object::getQuaternian(EulerAngles EAs){
+      if(EAs.y == 90 || EAs.y == -90){
+        EAs.y +=.001;
+      }
+      EAs *= DegreesToRadians;
+      return(getQuaternian(EAs.x,EAs.y,EAs.z));
     }
-    Quaternion object::getQuaternian(double roll, double pitch, double yaw){ 
-      // Abbreviations for the various angular functions
-      double cy = cos(yaw * 0.5);
-      double sy = sin(yaw * 0.5);
-      double cp = cos(pitch * 0.5);
-      double sp = sin(pitch * 0.5);
-      double cr = cos(roll * 0.5);
-      double sr = sin(roll * 0.5);
-
+    //Code adapted from http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToQuaternion/index.htm
+    Quaternion object::getQuaternian(double heading, double attitude, double bank){
+      // Assuming the angles are in radians.
+      double c1 = cos(heading/2);
+      double s1 = sin(heading/2);
+      double c2 = cos(attitude/2);
+      double s2 = sin(attitude/2);
+      double c3 = cos(bank/2);
+      double s3 = sin(bank/2);
+      double c1c2 = c1*c2;
+      double s1s2 = s1*s2;
       Quaternion q;
-      q.w = cy * cp * cr + sy * sp * sr;
-      q.x = cy * cp * sr - sy * sp * cr;
-      q.y = sy * cp * sr + cy * sp * cr;
-      q.z = sy * cp * cr - cy * sp * sr;
-
-      return q ;
+      q.w =c1c2*c3 - s1s2*s3;
+      q.x =c1c2*s3 + s1s2*c3;
+      q.y =s1*c2*c3 + c1*s2*s3;
+      q.z =c1*s2*c3 - s1*c2*s3;
+      return q;
     }
 
     mat4 object::toMatrix(vec4 Quaternian){
@@ -257,31 +273,33 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
         }  
         return(vec3(1,1,1));
     }
-    EulerAngles object::getEulerAngles(Quaternion q) {
-      EulerAngles angles;
-
-      // roll (x-axis rotation)
-      double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-      double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-      angles.x = std::atan2(sinr_cosp, cosr_cosp);
-
-      // pitch (y-axis rotation)
-      double sinp = 2 * (q.w * q.y - q.z * q.x);
-      if (std::abs(sinp) >= 1)
-          angles.y = std::copysign(M_PI / 2, sinp); // use 90 degrees if out of range
-      else
-          angles.y = std::asin(sinp);
-
-      // yaw (z-axis rotation)
-      double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-      double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-      angles.z = std::atan2(siny_cosp, cosy_cosp);
-
-      return angles;
+    // adapted from http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
+    EulerAngles object::getEulerAngles(Quaternion q1) {
+      double heading,attitude,bank;
+      double test = q1.x*q1.y + q1.z*q1.w;
+      if (test > 0.499) { // singularity at north pole
+        heading = 2 * atan2(q1.x,q1.w);
+        attitude = M_PI/2;
+        bank = 0;
+        return(EulerAngles(heading,attitude,bank)/DegreesToRadians);
+      }
+      if (test < -0.499) { // singularity at south pole
+        heading = -2 * atan2(q1.x,q1.w);
+        attitude = - M_PI/2;
+        bank = 0;
+        return(EulerAngles(heading,attitude,bank)/DegreesToRadians);
+      }
+      double sqx = q1.x*q1.x;
+      double sqy = q1.y*q1.y;
+      double sqz = q1.z*q1.z;
+      heading = atan2(2*q1.y*q1.w-2*q1.x*q1.z , 1 - 2*sqy - 2*sqz);
+      attitude = asin(2*test);
+      bank = atan2(2*q1.x*q1.w-2*q1.y*q1.z , 1 - 2*sqx - 2*sqz);
+      return(EulerAngles(heading,attitude,bank)/DegreesToRadians);
     }
    
     void object::set_orientation(Quaternion q){
-      set_orientation(getEulerAngles(q)/DegreesToRadians);
+      set_orientation(getEulerAngles(q));
     }
     
     void object::set_orientation(EulerAngles neworientaiton){
@@ -293,52 +311,49 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
       while(currentorientation.x < 0){currentorientation.x += 360;}  
       while(currentorientation.y < 0){currentorientation.y += 360;}
       while(currentorientation.z < 0){currentorientation.z += 360;}
-      currentori = getQuaternian(neworientaiton * DegreesToRadians);
+
+      currentori = getQuaternian(neworientaiton);
       rotationmatrix = 
         RotateX(currentorientation.x)*
         RotateY(currentorientation.y)*
         RotateZ(currentorientation.z);
     }
+    Quaternion object::slerp(Quaternion &q1, Quaternion &q2, double lambda) {
+      float dotproduct = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+      float theta, st, sut, sout, coeff1, coeff2;
 
-    Quaternion object::slerp(Quaternion const &q0, Quaternion const &q1, double t) {
-      // v0 and v1 should be unit length or else
-      // something broken will happen.
-      Quaternion q0norm = normalize(q0);
-      Quaternion q1norm = normalize(q1);
-
-      // Compute the cosine of the angle between the two vectors.
-      double dot = Angel::dot(q0, q1);
-
-      // If the dot product is negative, slerp won't take
-      // the shorter path. Note that v1 and -v1 are equivalent when
-      // the negation is applied to all four components. Fix by 
-      // reversing one quaternion.
-      if (dot < 0.0f) {
-          q1norm = q1norm * -1;
-          dot = -dot;
+      if (dotproduct > .99999999){ // if the distance is to close just retun the goal orientation.
+        std::cout << "Close to location setting it to goal" << std::endl;
+        std::cout << "Goal orienation" << getEulerAngles(q2) << std::endl;
+        return q2;
       }
 
-      const double DOT_THRESHOLD = 0.9995;
-      if (dot > DOT_THRESHOLD) {
-          // If the inputs are too close for comfort, linearly interpolate
-          // and normalize the result.
+      // algorithm adapted from Shoemake's paper
+      lambda=lambda/2.0;
 
-          Quaternion result = q0norm + t*(q1norm - q0norm);
-          result = normalize(result);
-          return result;
+      theta = (float) acos(dotproduct);
+      if (theta<0.0) theta=-theta;
+      
+      st = (float) sin(theta);
+      sut = (float) sin(lambda*theta);
+      sout = (float) sin((1-lambda)*theta);
+      coeff1 = sout/st;
+      coeff2 = sut/st;
+      Quaternion qr;
+      qr.x = coeff1*q1.x + coeff2*q2.x;
+      qr.y = coeff1*q1.y + coeff2*q2.y;
+      qr.z = coeff1*q1.z + coeff2*q2.z;
+      qr.w = coeff1*q1.w + coeff2*q2.w;
+      {using std::cout; using std::endl;
+        cout << "currentorientation " << currentorientation << endl;
+        cout << "goalorientaiton" << goalorientation << endl;
+
+        cout << "old quat->eulerangles" << getEulerAngles(q1) << endl; 
+        cout << "goal quat->eulerangles" << getEulerAngles(q2) << endl;
+        cout << "slerped eulerangles" << getEulerAngles(qr) << endl << endl;
       }
-
-      // Since dot is in range [0, DOT_THRESHOLD], acos is safe
-      double theta_0 = acos(dot);        // theta_0 = angle between input vectors
-      double theta = theta_0*t;          // theta = angle between v0 and result
-      double sin_theta = sin(theta);     // compute this value only once
-      double sin_theta_0 = sin(theta_0); // compute this value only once
-
-      double s0 = cos(theta) - dot * sin_theta / sin_theta_0;  // == sin(theta_0 - theta) / sin(theta_0)
-      double s1 = sin_theta / sin_theta_0;
-
-      return (s0 * q0norm) + (s1 * q1norm);
-    }  
+      return (qr);
+    }
 void object::Scale(float xamount, float yamount, float zamount){
   scalematrix = Angel::Scale(zamount,yamount,zamount);
 }
@@ -358,13 +373,21 @@ void object::update(float translationamountpercall,float rotationamountpercall){
         }
     }
     if(isRotating()){
-      Quaternion nextorientation = slerp(currentori,goalori,rotationamountpercall);
-      set_orientation(goalori);
+      if(goalorientation.y==90){
+        goalorientation.y -= .001;
+        goalori = getQuaternian(goalorientation);
+      }
+      if(goalorientation.y==-90){
+        goalorientation.y += .001;
+      }
+      Quaternion nextorientaion = slerp(currentori,goalori,rotationamountpercall);
+      set_orientation(nextorientaion);
     }
 }
 void object::updatewithtime(float timeseed){
-    float timescale = .005;
-    update(timeseed*timescale,timeseed*timescale);
+    float translationtimescale = .005;
+    float rotationtimescale = 0.0005;
+    update(timeseed*translationtimescale,timeseed*rotationtimescale);
 }
 
 

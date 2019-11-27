@@ -41,8 +41,8 @@ extern "C" void idleanimation(){
   
   
   for (auto p : scene.pieces){
-    //p->update(.15,1);
-    p->updatewithtime(timefactor);
+    p->update(.15,.04);
+    //p->updatewithtime(timefactor);
   }
 
   lasttime=time;
@@ -81,12 +81,12 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'y': scene.camera.movedown(stepsize); break;
   //
 
-  case 'b': scene.pieces[0]->Rotate(-10,0,0); break;
-  case 'B': scene.pieces[0]->Rotate(10,0,0); break;
-  case 'N': scene.pieces[0]->Rotate(0,10,0); break;
-  case 'n': scene.pieces[0]->Rotate(0,-10,0); break;
-  case 'M': scene.pieces[0]->Rotate(0,0,10); break;
-  case 'm': scene.pieces[0]->Rotate(0,0,-10); break;
+  case 'b': scene.pieces[0]->Rotate(10,0,0); break;
+  case 'B': scene.pieces[0]->Rotate(-10,0,0); break;
+  case 'N': scene.pieces[0]->Rotate(0,-10,0); break;
+  case 'n': scene.pieces[0]->Rotate(0,10,0); break;
+  case 'M': scene.pieces[0]->Rotate(0,0,-10); break;
+  case 'm': scene.pieces[0]->Rotate(0,0,10); break;
 
   // standard walking movement
   case 'w': scene.camera.moveforward(stepsize); break;
@@ -94,7 +94,7 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'a': scene.camera.moveright(stepsize); break;
   case 'd': scene.camera.moveleft(stepsize);  break;
 
-  case 't':scene.pieces[0]->Testeulerangleconversion();
+  case 't':scene.pieces[0]->Tests();
 
   case 'o': scene.pieces[0]->slowDown(10); break;
   case 'O': scene.pieces[0]->speedUp(10); break;

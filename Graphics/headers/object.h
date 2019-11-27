@@ -43,7 +43,7 @@ class object{
             inline float rotationSpeed(){return rotationspeed / 10000;}
             inline void speedUpRotation(int amount){rotationspeed += amount;}
             inline void slowDownRotation(int amount){rotationspeed -= amount;}
-            void Testeulerangleconversion();
+            void Tests();
         ////////////////////////////////////
 
         void Scale(float xamount,float yamount, float zamount); 
@@ -104,7 +104,7 @@ class object{
             
             void set_goal_orientation(Quaternion q);
             
-            Quaternion slerp(Quaternion const &q0, Quaternion const &q1, double t);  
+            Quaternion slerp(Quaternion &q0, Quaternion &q1, double t);  
         // Scaling
             mat4 scalematrix;
         // 
