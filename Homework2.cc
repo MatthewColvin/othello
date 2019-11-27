@@ -14,60 +14,7 @@ float camrotationamount = 0.01;
 int oldx,oldy,deltax,deltay;
 float lookaroundsensetivity=0.0008;
 
-bool isUnitQuaterian(vec4 q){
-  if ((q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w) != 1){
-   std::cerr << "watchout quaternians should sum to 1" << std::endl;
-   return false;
-  }
-  return true;
-}
-mat4 toMatrix(vec4 Quaternian){
-  if(!isUnitQuaterian(Quaternian)){
-    std::cerr<< "could not convert to rotation matrix because not unit quaterian" << std::endl;
-    return(mat4());
-  }else{
-    float x = Quaternian.x; 
-    float y = Quaternian.y;
-    float z = Quaternian.z;
-    float w = Quaternian.w;
-    // q0 = w // q1 = z // q2 = y // q3 = x
-    mat4 r;
-    r[0][0]= w+z-x-y    ;r[0][1]= 2*(z*y-w*y);r[0][2]=2*(w*y+z*x) ;r[0][3]=0;
-    r[1][0]= 2*(z*y+w*x);r[1][1]= w-z+y-x    ;r[1][2]=2*(y*x-w*z) ;r[1][3]=0;
-    r[2][0]= 2*(z*x-w*y);r[2][1]= 2*(w*z+y*x);r[2][2]=w-z-y+x     ;r[2][3]=0;
-    
-    r[3][0]= 0 ;r[3][1]= 0 ;r[3][2]= 0 ;       r[3][3]= 1;
 
-    return r;
-  }
-}
-vec4 slerp(vec4 const &q0, vec4 const &q1, double t) {
-      // v0 and v1 should be unit length or else
-      // something broken will happen.
-      normalize(q0);
-      normalize(q1);
-      // Compute the cosine of the angle between the two vectors.
-      double dot = Angel::dot(q0,q1); 
-
-      const double DOT_THRESHOLD = 0.9995;
-      if (dot > DOT_THRESHOLD) {
-          // If the inputs are too close for comfort, linearly interpolate
-          // and normalize the result.
-
-          vec4 result = q0 + t*(q1 - q0);
-          result = normalize(result);
-          return result;
-      }
-      
-      //std::clamp(dot, -1.0, 1.0);           // Robustness: Stay within domain of acos()
-      double theta_0 = acos(dot);  // theta_0 = angle between input vectors
-      double theta = theta_0*t;    // theta = angle between v0 and result 
-
-      vec4 v2 = q1 - q0 * dot;
-      v2 = normalize(v2);             // { v0, v2 } is now an orthonormal basis
-
-      return q0*cos(theta) + v2*sin(theta);
-}
 
 extern "C" void display();
 extern "C" void idleanimation();
