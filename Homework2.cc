@@ -94,6 +94,7 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'a': scene.camera.moveright(stepsize); break;
   case 'd': scene.camera.moveleft(stepsize);  break;
 
+  case 't':scene.pieces[0]->Testeulerangleconversion();
 
   case 'o': scene.pieces[0]->slowDown(10); break;
   case 'O': scene.pieces[0]->speedUp(10); break;
@@ -117,6 +118,7 @@ extern "C" void keyboard(unsigned char key, int x, int y){
     scene.incr=0.1;
 
     break;
+  
   }
 
   glutPostRedisplay();

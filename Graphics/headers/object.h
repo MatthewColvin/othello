@@ -2,6 +2,8 @@
 #define OBJECT_H
 
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <Angel.h>
 
 using Angel::vec4;
@@ -36,10 +38,12 @@ class object{
         void Rotate(float xdegrees,float ydegrees,float zdegrees);
         // Rotation ////////////////////////
             void set_goal_orientation(EulerAngles neworientation);
+            void set_goal_orientation(double roll, double pitch, double yaw);
 
             inline float rotationSpeed(){return rotationspeed / 10000;}
             inline void speedUpRotation(int amount){rotationspeed += amount;}
             inline void slowDownRotation(int amount){rotationspeed -= amount;}
+            void Testeulerangleconversion();
         ////////////////////////////////////
 
         void Scale(float xamount,float yamount, float zamount); 
@@ -73,6 +77,9 @@ class object{
             
             EulerAngles currentorientation;
             EulerAngles goalorientation;
+
+            Quaternion currentori;
+            Quaternion goalori;
 
             inline float Xdegreestogoal(){return (goalorientation.x - currentorientation.x);};
             inline float Ydegreestogoal(){return (goalorientation.y - currentorientation.y);};

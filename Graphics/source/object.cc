@@ -82,22 +82,35 @@ void object::Translate(float xamount,float yamount, float zamount){
       z = newPosition.z;
       translationmatrix = Angel::Translate(x,y,z) * mat4();
     }
-void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
-    goalorientation.x += xdegrees;
-    goalorientation.y += ydegrees;
-    goalorientation.z += zdegrees;
-        
-    while(goalorientation.x >= 360){goalorientation.x -= 360;}  
-    while(goalorientation.y >= 360){goalorientation.y -= 360;}
-    while(goalorientation.z >= 360){goalorientation.z -= 360;} 
-    
-    while(goalorientation.x < 0){goalorientation.x += 360;}  
-    while(goalorientation.y < 0){goalorientation.y += 360;}
-    while(goalorientation.z < 0){goalorientation.z += 360;}
+void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
+    goalorientation.x += rolldegrees;
+    goalorientation.y += pitchdegrees;
+    goalorientation.z += yawdegrees;
+    set_goal_orientation(goalorientation);
   }
   // Public Rotation /////////////////////////
+    void object::Testeulerangleconversion(){
+      using std::cout;
+      using std::endl;
+      cout << "eulerangle -> quaterian -> eulerangle:" << endl;
+      EulerAngles EAtest(80,69,40);
+      cout<< EAtest << endl;
+      Quaternion Qtest = getQuaternian(EAtest*DegreesToRadians);
+      cout << Qtest << endl;
+      EulerAngles EAeq = getEulerAngles(Qtest)/DegreesToRadians;
+      cout << EAeq << endl;
+      cout << "quaterian -> eulerangle -> quaterian  test:" << endl;
+      Quaternion Q1test(0,0,0,1);
+      cout << Q1test << endl;
+      EulerAngles EA1test = getEulerAngles(Q1test);
+      cout << EA1test << endl;
+      Quaternion Q1Eq = getQuaternian(EA1test);
+      cout << Q1Eq << endl;
+
+    }
     void object::set_goal_orientation(EulerAngles newgoalorientaiton){
         //fix new goal
+        goalorientation = newgoalorientaiton;
         while(goalorientation.x >= 360){goalorientation.x -= 360;}  
         while(goalorientation.y >= 360){goalorientation.y -= 360;}
         while(goalorientation.z >= 360){goalorientation.z -= 360;} 
@@ -105,8 +118,10 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
         while(goalorientation.x < 0){goalorientation.x += 360;}  
         while(goalorientation.y < 0){goalorientation.y += 360;}
         while(goalorientation.z < 0){goalorientation.z += 360;}
-        
-        goalorientation = newgoalorientaiton;
+        goalori = getQuaternian(goalorientation * DegreesToRadians);
+    }
+    void object::set_goal_orientation(double roll, double pitch, double yaw){
+      set_goal_orientation(EulerAngles(roll,pitch,yaw));
     }
   // Private Rotation ////////////////////////
     bool object::isRotating(){
@@ -174,17 +189,10 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       }
     }
     Quaternion object::getQuaternian(EulerAngles eulerangles){
-      float yaw = eulerangles.x * DegreesToRadians; 
-      float pitch = eulerangles.y * DegreesToRadians;
-      float roll = eulerangles.z * DegreesToRadians;
-      
-      float qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
-      float qy = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
-      float qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
-      float qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
-      return vec4(qx,qy,qz,qw);
+      return(getQuaternian(eulerangles.x,eulerangles.y,eulerangles.z));
+                            // yaw (Z), pitch (Y), roll (X)
     }
-    Quaternion object::getQuaternian(double yaw, double pitch, double roll){ // yaw (Z), pitch (Y), roll (X)
+    Quaternion object::getQuaternian(double roll, double pitch, double yaw){ 
       // Abbreviations for the various angular functions
       double cy = cos(yaw * 0.5);
       double sy = sin(yaw * 0.5);
@@ -199,7 +207,7 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       q.y = sy * cp * sr + cy * sp * cr;
       q.z = sy * cp * cr - cy * sp * sr;
 
-      return q;
+      return q ;
     }
 
     mat4 object::toMatrix(vec4 Quaternian){
@@ -271,16 +279,9 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
 
       return angles;
     }
-    
+   
     void object::set_orientation(Quaternion q){
-      currentorientation = getEulerAngles(q);
-      while(currentorientation.x > 360){currentorientation.x -= 360;}  
-      while(currentorientation.y > 360){currentorientation.y -= 360;}
-      while(currentorientation.z > 360){currentorientation.z -= 360;} 
-      
-      while(currentorientation.x < 0){currentorientation.x += 360;}  
-      while(currentorientation.y < 0){currentorientation.y += 360;}
-      while(currentorientation.z < 0){currentorientation.z += 360;}
+      set_orientation(getEulerAngles(q)/DegreesToRadians);
     }
     
     void object::set_orientation(EulerAngles neworientaiton){
@@ -292,7 +293,7 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
       while(currentorientation.x < 0){currentorientation.x += 360;}  
       while(currentorientation.y < 0){currentorientation.y += 360;}
       while(currentorientation.z < 0){currentorientation.z += 360;}
-
+      currentori = getQuaternian(neworientaiton * DegreesToRadians);
       rotationmatrix = 
         RotateX(currentorientation.x)*
         RotateY(currentorientation.y)*
@@ -302,29 +303,41 @@ void object::Rotate(float xdegrees,float ydegrees,float zdegrees){
     Quaternion object::slerp(Quaternion const &q0, Quaternion const &q1, double t) {
       // v0 and v1 should be unit length or else
       // something broken will happen.
-      normalize(q0);
-      normalize(q1);
+      Quaternion q0norm = normalize(q0);
+      Quaternion q1norm = normalize(q1);
+
       // Compute the cosine of the angle between the two vectors.
-      double dot = Angel::dot(q0,q1); 
+      double dot = Angel::dot(q0, q1);
+
+      // If the dot product is negative, slerp won't take
+      // the shorter path. Note that v1 and -v1 are equivalent when
+      // the negation is applied to all four components. Fix by 
+      // reversing one quaternion.
+      if (dot < 0.0f) {
+          q1norm = q1norm * -1;
+          dot = -dot;
+      }
 
       const double DOT_THRESHOLD = 0.9995;
       if (dot > DOT_THRESHOLD) {
           // If the inputs are too close for comfort, linearly interpolate
           // and normalize the result.
 
-          vec4 result = q0 + t*(q1 - q0);
+          Quaternion result = q0norm + t*(q1norm - q0norm);
           result = normalize(result);
           return result;
       }
-      
-      //std::clamp(dot, -1.0, 1.0);           // Robustness: Stay within domain of acos()
-      double theta_0 = acos(dot);  // theta_0 = angle between input vectors
-      double theta = theta_0*t;    // theta = angle between v0 and result 
 
-      vec4 v2 = q1 - q0 * dot;
-      v2 = normalize(v2);             // { v0, v2 } is now an orthonormal basis
+      // Since dot is in range [0, DOT_THRESHOLD], acos is safe
+      double theta_0 = acos(dot);        // theta_0 = angle between input vectors
+      double theta = theta_0*t;          // theta = angle between v0 and result
+      double sin_theta = sin(theta);     // compute this value only once
+      double sin_theta_0 = sin(theta_0); // compute this value only once
 
-      return q0*cos(theta) + v2*sin(theta);
+      double s0 = cos(theta) - dot * sin_theta / sin_theta_0;  // == sin(theta_0 - theta) / sin(theta_0)
+      double s1 = sin_theta / sin_theta_0;
+
+      return (s0 * q0norm) + (s1 * q1norm);
     }  
 void object::Scale(float xamount, float yamount, float zamount){
   scalematrix = Angel::Scale(zamount,yamount,zamount);
@@ -345,7 +358,8 @@ void object::update(float translationamountpercall,float rotationamountpercall){
         }
     }
     if(isRotating()){
-      set_orientation(goalorientation);
+      Quaternion nextorientation = slerp(currentori,goalori,rotationamountpercall);
+      set_orientation(goalori);
     }
 }
 void object::updatewithtime(float timeseed){
