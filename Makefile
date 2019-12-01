@@ -10,7 +10,6 @@
 # Assumes the following file exists in the proper place.
 srcpth = ./Graphics/source/
 headerpth = ./Graphics/headers/
-glm = ./Graphics/glm/glm/
 angel = ./Graphics/angel/include/
 
 # What compiler do you want to use for c++ files?
@@ -28,7 +27,7 @@ LDLIBS = -lGL -lGLU  -lGLEW /usr/lib/x86_64-linux-gnu/libglut.so.3
 InitShader = /home/mcolvin/Desktop/othello/Graphics/angel/Common/InitShader.o
 
 # Where to find the include files
-INCS = -I /usr/include/ -I $(glm) -I $(angel) -I $(headerpth)
+INCS = -I /usr/include/ -I $(angel) -I $(headerpth)
 
 # options to pass to the compiler (all the gcc ones, and the where to
 # find the includes).
@@ -69,6 +68,10 @@ piece.o: $(headerpth)piece.h \
 		  $(srcpth)piece.cc   \
 		  object.o
 	$(CC) $(srcpth)piece.cc  -c  $(INCS) $(OPTIONS)
+board.o: $(headerpth)board.h \
+		  $(srcpth)board.cc   \
+		  object.o
+	$(CC) $(srcpth)board.cc  -c  $(INCS) $(OPTIONS)
 
 ####################################################################
 
@@ -78,8 +81,9 @@ homework2: object.o    $(headerpth)object.h    \
 		   sphere.o    $(headerpth)sphere.h    \
 		   cube_door.o $(headerpth)cube_door.h \
 		   camera.o    $(headerpth)camera.h    \
-		   piece.o     $(headerpth)piece.h
-	$(CC)  Homework2.cc object.o scene.o piece.o cube.o cube_door.o camera.o sphere.o $(InitShader) $(INCS) $(OPTIONS) $(LDLIBS) -o homework2
+		   piece.o     $(headerpth)piece.h     \
+		   board.o     $(headerpth)board.h
+	$(CC)  Homework2.cc *.o $(InitShader) $(INCS) $(OPTIONS) $(LDLIBS) -o homework2
 clean:
 	rm -f $(OBJECTS) *.o *~
 squeakyclean: clean
