@@ -68,6 +68,10 @@ piece.o: $(headerpth)piece.h \
 		  $(srcpth)piece.cc   \
 		  object.o
 	$(CC) $(srcpth)piece.cc  -c  $(INCS) $(OPTIONS)
+space.o: $(headerpth)space.h \
+		  $(srcpth)space.cc   \
+		  object.o
+	$(CC) $(srcpth)space.cc  -c  $(INCS) $(OPTIONS)
 board.o: $(headerpth)board.h \
 		  $(srcpth)board.cc   \
 		  object.o
@@ -82,7 +86,8 @@ homework2: object.o    $(headerpth)object.h    \
 		   cube_door.o $(headerpth)cube_door.h \
 		   camera.o    $(headerpth)camera.h    \
 		   piece.o     $(headerpth)piece.h     \
-		   board.o     $(headerpth)board.h
+		   board.o     $(headerpth)board.h     \
+		   space.o     $(headerpth)space.h
 	$(CC)  Homework2.cc *.o $(InitShader) $(INCS) $(OPTIONS) $(LDLIBS) -o homework2
 clean:
 	rm -f $(OBJECTS) *.o *~

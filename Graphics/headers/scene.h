@@ -43,7 +43,7 @@ class Scene{
 
 
 		vector<Piece*> pieces;
-		//Board *board;
+		Board *board;
 
 	private:
 		vector<point4> AllVertices;
