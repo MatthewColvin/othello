@@ -15,9 +15,8 @@ void cube_door::draw()
 }
 
 // Initialization function.
-cube_door::cube_door(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<color4>& wallcolors,
-GLint shader_mv_loc,int startinvao):
-cube(globalpoints,globalcolors,wallcolors,shader_mv_loc,startinvao){
-
+cube_door::cube_door(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<norm4>& globalnormals,
+vector<color4>& wallcolors,GLint shader_mv_loc,int startinvao):
+cube(globalpoints,globalcolors,globalnormals,wallcolors,shader_mv_loc,startinvao){
   doorAngle=0.0;
 }

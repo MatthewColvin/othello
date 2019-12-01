@@ -19,6 +19,7 @@ class Shader{
             shade = glGetUniformLocation(GL_location, "shade");
             vPosition = glGetAttribLocation(GL_location, "vPosition");
             vColor = glGetAttribLocation(GL_location,"vColor");
+            vNormal = glGetAttribLocation(GL_location,"vNormal");
 
             if (
             ModelViewMatrix == -1 || 
@@ -26,7 +27,8 @@ class Shader{
             ProjectionMatrix == -1 ||
             shade == -1 ||
             vPosition == -1 ||
-            vColor == -1
+            vColor == -1 ||
+            vNormal == -1
             ){
                 assert("Error in shader initilization!!");
             }
@@ -41,7 +43,7 @@ class Shader{
 
         inline GLint VertPosition(){return vPosition;}
         inline GLint VertColor() { return vColor;}
-
+        inline GLint VertNormal() { return vNormal;}
         inline GLint Location(){return GL_location;};
     
 
@@ -49,13 +51,17 @@ class Shader{
     private:
         GLint GL_location; // location of shader program.
         
-        GLint ModelViewMatrix;
-        GLint CameraViewMatrix;
-        GLint ProjectionMatrix;
-        GLint shade;
+        //Positioning 
+        GLint vPosition; // attribute vertex postionts
+            GLint ModelViewMatrix;//mat4
+            GLint CameraViewMatrix;//mat4
+            GLint ProjectionMatrix;//mat4
+            GLint shade;
 
-        GLint vPosition;
-        GLint vColor;
+        // Lighting model
+        GLint vColor; // attribute vertex colors
+        GLint vNormal; // attribute vertex normals
+
 };
 
 #endif

@@ -2,14 +2,8 @@
 // MyQuad generates two triangles for each face and assigns colors
 // to the vertices
 void cube::MyQuad(int a, int b, int c, int d, vec4& color){
-  
-  colors.push_back(color); points.push_back(vertices[a]);
-  colors.push_back(color); points.push_back(vertices[b]);
-  colors.push_back(color); points.push_back(vertices[c]);
-
-  colors.push_back(color); points.push_back(vertices[a]);
-  colors.push_back(color); points.push_back(vertices[c]);
-  colors.push_back(color); points.push_back(vertices[d]);
+  triangle(vertices[a],vertices[b],vertices[c],color);
+  triangle(vertices[a],vertices[c],vertices[d],color);
 }
 
 void cube::makecolorcube(vector<vec4> cubewallcolors1){
@@ -21,10 +15,9 @@ void cube::makecolorcube(vector<vec4> cubewallcolors1){
   MyQuad(5, 4, 0, 1, cubewallcolors1[5]);
 }
 
-cube::cube(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<color4>& wallcolors,
-    GLint shader_mv_loc,
-    int startinvao
-  ):object(globalpoints,globalcolors){
+cube::cube(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<norm4>& globalnormals,
+vector<color4>& wallcolors,GLint shader_mv_loc,int startinvao
+):object(globalpoints,globalcolors,globalnormals){
   
   makecolorcube(wallcolors);
   
@@ -38,5 +31,8 @@ cube::cube(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<colo
   );
   globalcolors.insert(globalcolors.end(),
     colors.begin(),colors.end()
+  );
+  globalnormals.insert(globalnormals.end(),
+    normals.begin(),normals.end()
   );
 }

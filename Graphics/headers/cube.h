@@ -12,6 +12,7 @@ class cube : public object {
     cube(
       vector<point4>& globalpoints,
       vector<color4>& globalcolors,
+      vector<norm4> & globalnormals,
       vector<color4>& wallcolors,
       GLint shader_mv_loc,
       int startinvao

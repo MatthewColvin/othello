@@ -8,7 +8,7 @@ Space::Space(
     vector<color4> spacecolors(6,spacecolor);
     int cubesStartpointinvao = nInitial_Point;
     for(int i=0; i<4; i++){
-        cubes[i] = new cube(globalpoints,globalcolors,spacecolors,nmodel_view,cubesStartpointinvao);
+        cubes[i] = new cube(globalpoints,globalcolors,globalnormals,spacecolors,nmodel_view,cubesStartpointinvao);
         cubesStartpointinvao+=cubes[i]->GetNumVerts();
     }
     NumVertices = cubesStartpointinvao - nInitial_Point;
