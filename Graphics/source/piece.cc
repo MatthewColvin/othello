@@ -12,7 +12,7 @@ Piece::Piece(
 
         spheres[1] = new sphere(
             globalpoints,globalcolors,globalnormals,
-            vec4(0,0,0,1),nmodel_view,nInitial_Point+spheres[0]->NumVerts());
+            vec4(0,0,0,1),nmodel_view,nInitial_Point+spheres[0]->GetNumVerts());
 }
 void Piece::draw(){
     // Everything is drawn in relation to the Piece modelview

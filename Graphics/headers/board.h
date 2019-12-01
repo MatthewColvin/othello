@@ -12,8 +12,11 @@ class Board : public object{
         );
         
         void draw();
-    private:
 
+    private:
+        vector<cube*> cubes; // 18 cubes that will make up the boards shape
+        float length, width, depth; 
+        color4 boardcolor = color4(120, 88, 25,0);
 
 };
 

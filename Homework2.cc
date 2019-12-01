@@ -141,6 +141,7 @@ extern "C" void display(){
   for (auto piece : scene.pieces){
     piece->draw();
   }
+  scene.board->draw();
 
   glutSwapBuffers();
 }

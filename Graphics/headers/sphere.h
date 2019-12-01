@@ -15,7 +15,6 @@ public:
     vector<norm4>& globalnormals, 
     color4 color ,GLint nmodel_view ,int nInitial_Point
   );
-  inline int NumVerts(){return NumVertices;}
 
 private:
   const int NumTimesToSubdivide = 5;

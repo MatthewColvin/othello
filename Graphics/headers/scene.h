@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "shader.h"
 #include "piece.h"
+#include "board.h"
 
 using std::string;
 // struct shapedata{
@@ -42,6 +43,7 @@ class Scene{
 
 
 		vector<Piece*> pieces;
+		Board *board;
 
 	private:
 		vector<point4> AllVertices;
