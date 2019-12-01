@@ -28,15 +28,23 @@ GLint lasttime=0;
 extern "C" void idleanimation(){
   int time = glutGet(GLUT_ELAPSED_TIME);
   int timefactor = time - lasttime;
+  //////Debug cam angels /////////////////////////
+    // cameras angle about the y axis how you would normally rotate a camera left and right
+    stringstream cameraangleiny;
+    cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
+    // camera angle about the x axis rotating the camera up and down
+    stringstream cameraangleinx;
+    cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
+  ////////////////////////////////////////////////
+  ////Eye At debug///////////////////////////////
+    vec4 at= scene.camera.get_at();
+    vec4 eye = scene.camera.get_eye();
+    stringstream camAt,cameye;
+    camAt << "At=" <<  setprecision(2) << "x:" << at.x << "y:" << at.y << "z:" << at.z ;
+    cameye << "eye=" <<  setprecision(2) <<"x:" << eye.x << "y:" << eye.y << "z:" << eye.z ;
+  ///////////////////////////////////////////////
   
-  // cameras angle about the y axis how you would normally rotate a camera left and right
-  stringstream cameraangleiny;
-  cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
-  // camera angle about the x axis rotating the camera up and down
-  stringstream cameraangleinx;
-  cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
-
-  string newtitle = cameraangleiny.str() + "  " + cameraangleinx.str() ;
+  string newtitle = camAt.str() + "  " + cameye.str() ;
   glutSetWindowTitle(newtitle.c_str());
   
   
@@ -191,5 +199,3 @@ int main(int argc, char **argv){
   glutMainLoop();
   return(EXIT_SUCCESS);
 }
-
-
