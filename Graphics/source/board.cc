@@ -13,7 +13,7 @@ Board::Board(
         for(int j=0; j<8; j++){
             spaces[i][j] = (new Space(
                 globalpoints,globalcolors,globalnormals,
-                nmodel_view,spacestartinvao)
+                nmodel_view,spacestartinvao,boardcolor)
             );
         spacestartinvao += spaces[i][j]->GetNumVerts();
         }
@@ -32,5 +32,3 @@ void Board::draw(){
         }
     }
 }
-
-

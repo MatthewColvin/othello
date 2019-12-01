@@ -3,12 +3,12 @@ Space::Space(
     vector<point4>& globalpoints,
     vector<color4>& globalcolors,
     vector<norm4>& globalnormals, 
-    GLint nmodel_view ,int nInitial_Point
+    GLint nmodel_view ,int nInitial_Point, color4 spacecolor
 ):object(globalpoints,globalcolors,globalnormals){
-    vector<color4> spacecolor(6,color4(120, 88, 25));
+    vector<color4> spacecolors(6,spacecolor);
     int cubesStartpointinvao = nInitial_Point;
     for(int i=0; i<4; i++){
-        cubes[i] = new cube(globalpoints,globalcolors,spacecolor,nmodel_view,cubesStartpointinvao);
+        cubes[i] = new cube(globalpoints,globalcolors,spacecolors,nmodel_view,cubesStartpointinvao);
         cubesStartpointinvao+=cubes[i]->GetNumVerts();
     }
     NumVertices = cubesStartpointinvao - nInitial_Point;

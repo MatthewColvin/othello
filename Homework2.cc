@@ -28,15 +28,17 @@ GLint lasttime=0;
 extern "C" void idleanimation(){
   int time = glutGet(GLUT_ELAPSED_TIME);
   int timefactor = time - lasttime;
-  //////Debug cam angels /////////////////////////
+  
+  //////Debug cam angels ////////////////////////
     // cameras angle about the y axis how you would normally rotate a camera left and right
     stringstream cameraangleiny;
     cameraangleiny  << "CAY: " << setprecision(2) << scene.camera.get_cameraYangel();
     // camera angle about the x axis rotating the camera up and down
     stringstream cameraangleinx;
     cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
-  ////////////////////////////////////////////////
-  ////Eye At debug///////////////////////////////
+  ///////////////////////////////////////////////
+  
+  //////Eye At debug/////////////////////////////
     vec4 at= scene.camera.get_at();
     vec4 eye = scene.camera.get_eye();
     stringstream camAt,cameye;
@@ -71,13 +73,9 @@ extern "C" void special(int key, int x, int y){
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
   switch(key) {
-  case 033: // Escape Key
-  case 'q': case 'Q':
-    exit(EXIT_SUCCESS);
-    break;
+  //033 escape key
+  case 033: case 'q': case 'Q': exit(EXIT_SUCCESS);break;
 
-    // Speed up/slow down movements
-  
   case '+': scene.incr*=2.0; break;
   case '-': scene.incr/=2.0; break;
 
@@ -144,8 +142,7 @@ extern "C" void display(){
   //send Prespective matrix to gpu
   mat4  p = Perspective(scene.fovy, scene.aspect, scene.zNear, scene.zFar) ;
   glUniformMatrix4fv(scene.shader.projectionMatrix(), 1, GL_TRUE, p);
-  
-  
+   
   for (auto piece : scene.pieces){
     piece->draw();
   }

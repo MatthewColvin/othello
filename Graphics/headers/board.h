@@ -13,7 +13,7 @@ class Board : public object{
         void draw();
 
     private:
-        color4 boardcolor = color4(120, 88, 25,0);
+        color4 boardcolor = color4(120.0/255.0, 88.0/255.0, 25.0/255.0,1);
         vector<vector<Space*>> spaces;
 };
 
