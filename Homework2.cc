@@ -141,8 +141,8 @@ extern "C" void display(){
   for (auto piece : scene.pieces){
     piece->draw();
   }
-  scene.board->draw();
-
+  //scene.board->draw();
+  
   glutSwapBuffers();
 }
 extern "C" void lookaround(int x, int y){

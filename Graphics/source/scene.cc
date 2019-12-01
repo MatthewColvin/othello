@@ -42,10 +42,10 @@ void Scene::init(){
 
   shader.init(fshaderpath,vshaderpath);
   
-  board = new Board(
-    AllVertices,AllColors,AllNormals,
-    shader.modelViewMatrix(),AllVertices.size()
-  );
+  // board = new Board(
+  //   AllVertices,AllColors,AllNormals,
+  //   shader.modelViewMatrix(),AllVertices.size()
+  // );
 
   pieces.push_back(new Piece(
     AllVertices,AllColors,AllNormals,
