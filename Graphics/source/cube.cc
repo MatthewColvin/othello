@@ -6,13 +6,13 @@ void cube::MyQuad(int a, int b, int c, int d, vec4& color){
   triangle(vertices[a],vertices[c],vertices[d],color);
 }
 
-void cube::makecolorcube(vector<vec4> cubewallcolors1){
-  MyQuad(1, 0, 3, 2, cubewallcolors1[0]);
-  MyQuad(2, 3, 7, 6, cubewallcolors1[1]);
-  MyQuad(3, 0, 4, 7, cubewallcolors1[2]);
-  MyQuad(6, 5, 1, 2, cubewallcolors1[3]);
-  MyQuad(4, 5, 6, 7, cubewallcolors1[4]);
-  MyQuad(5, 4, 0, 1, cubewallcolors1[5]);
+void cube::makecolorcube(vector<vec4> cubewallcolors){
+  MyQuad(1, 0, 3, 2, cubewallcolors[0]);
+  MyQuad(2, 3, 7, 6, cubewallcolors[1]);
+  MyQuad(3, 0, 4, 7, cubewallcolors[2]);
+  MyQuad(6, 5, 1, 2, cubewallcolors[3]);
+  MyQuad(4, 5, 6, 7, cubewallcolors[4]);
+  MyQuad(5, 4, 0, 1, cubewallcolors[5]);
 }
 
 cube::cube(vector<point4>& globalpoints,vector<color4>& globalcolors,vector<norm4>& globalnormals,

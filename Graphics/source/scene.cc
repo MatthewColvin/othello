@@ -7,26 +7,6 @@
 #include "shader.h"
 #include "piece.h"
 
-  vector<color4> cubewallcolors1 {
-    vec4(1,0,0,1), 
-    vec4(0,1,0,1), 
-    vec4(0,0,1,1), 
-    vec4(1,1,0,1), 
-    vec4(1,0,1,1), 
-    vec4(0,1,1,1)
-  };
-  vector<color4> cubewallcolors2{
-    vec4(0.5,0.5,0,1), 
-    vec4(0,0.5,0,1),
-    vec4(0,0,0.5,1),
-    vec4(0.5,0.5,0,1), 
-    vec4(0.5,0,0.5,1), 
-    vec4(0,0.5,0.5,1)
-  };
-  vector< vector<color4> > cubecolors{cubewallcolors1,cubewallcolors2};
-
-//----------------------------------------------------------------------------
-// OpenGL initialization
 void Scene::init(){
   // Create a vertex array object
   GLuint vao;
@@ -125,4 +105,3 @@ void Scene::update(int timefactor){
     //p->updatewithtime(timefactor);
   }
 }
-//----------------------------------------------------------------------------
