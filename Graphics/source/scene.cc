@@ -53,62 +53,76 @@ void Scene::init(){
   );
  
   // Now send the data to the GPU
-  
-  glEnableVertexAttribArray(shader.VertPosition());
-  glVertexAttribPointer(
-    shader.VertPosition(), 
-    4, 
-    GL_FLOAT, 
-    GL_FALSE, 
-    0,
-		BUFFER_OFFSET(0)
-  );
-  glEnableVertexAttribArray(shader.VertColor());
-  glVertexAttribPointer(
-    shader.VertColor(), 
-    4, 
-    GL_FLOAT, 
-    GL_FALSE, 
-    0,
-		BUFFER_OFFSET(AllVertices.size()*sizeof(vec4))
-  );
-  glEnableVertexAttribArray(shader.VertNormal());
-  glVertexAttribPointer(
-    shader.VertNormal(), 
-    4, 
-    GL_FLOAT, 
-    GL_FALSE, 
-    0,
-		BUFFER_OFFSET(AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4))
-  );
-  
-  glBufferData(
-    GL_ARRAY_BUFFER, 
-    AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4) + AllNormals.size()*sizeof(vec4),
-	  NULL,
-    GL_STATIC_DRAW
-  );
-  glBufferSubData(
-    GL_ARRAY_BUFFER,
-    0, 
-    AllVertices.size()*sizeof(vec4), AllVertices[0]
-  );
-  glBufferSubData(
-    GL_ARRAY_BUFFER, 
-    AllVertices.size()*sizeof(vec4), 
-    AllColors.size()*sizeof(vec4), 
-    AllColors[0]
-  );
-  glBufferSubData(
-    GL_ARRAY_BUFFER, 
-    AllVertices.size()*sizeof(vec4)+ AllColors.size()*sizeof(vec4), 
-    AllNormals.size()*sizeof(vec4),
-    AllNormals[0]
-  );
-  
+    glEnableVertexAttribArray(shader.VertPosition());
+    glVertexAttribPointer(
+      shader.VertPosition(), 
+      4, 
+      GL_FLOAT, 
+      GL_FALSE, 
+      0,
+      BUFFER_OFFSET(0)
+    );
+    glEnableVertexAttribArray(shader.VertColor());
+    glVertexAttribPointer(
+      shader.VertColor(), 
+      4, 
+      GL_FLOAT, 
+      GL_FALSE, 
+      0,
+      BUFFER_OFFSET(AllVertices.size()*sizeof(vec4))
+    );
+    glEnableVertexAttribArray(shader.VertNormal());
+    glVertexAttribPointer(
+      shader.VertNormal(), 
+      4, 
+      GL_FLOAT, 
+      GL_FALSE, 
+      0,
+      BUFFER_OFFSET(AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4))
+    );
+    
+    glBufferData(
+      GL_ARRAY_BUFFER, 
+      AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4) + AllNormals.size()*sizeof(vec4),
+      NULL,
+      GL_STATIC_DRAW
+    );
+    glBufferSubData(
+      GL_ARRAY_BUFFER,
+      0, 
+      AllVertices.size()*sizeof(vec4), AllVertices[0]
+    );
+    glBufferSubData(
+      GL_ARRAY_BUFFER, 
+      AllVertices.size()*sizeof(vec4), 
+      AllColors.size()*sizeof(vec4), 
+      AllColors[0]
+    );
+    glBufferSubData(
+      GL_ARRAY_BUFFER, 
+      AllVertices.size()*sizeof(vec4)+ AllColors.size()*sizeof(vec4), 
+      AllNormals.size()*sizeof(vec4),
+      AllNormals[0]
+    );
+  //
   
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.4,0.4,0.4, 1.0); 
 }
-
+void Scene::draw(){
+  //send Camera matrix to gpu
+  mat4 cv = camera.generate_view_matrix();
+  glUniformMatrix4fv(shader.cameraViewMatrix(), 1, GL_TRUE, cv);
+  
+  for (auto piece : pieces){
+    piece->draw();
+  }
+  board->draw();
+}
+void Scene::update(int timefactor){
+  for (auto p : pieces){
+    p->update(.15,.04);
+    //p->updatewithtime(timefactor);
+  }
+}
 //----------------------------------------------------------------------------

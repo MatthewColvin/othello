@@ -15,7 +15,6 @@ class Shader{
 
             ModelViewMatrix = glGetUniformLocation(GL_location, "model_view");
             CameraViewMatrix = glGetUniformLocation(GL_location, "camera_view");
-            ProjectionMatrix = glGetUniformLocation(GL_location, "projection");
             shade = glGetUniformLocation(GL_location, "shade");
             vPosition = glGetAttribLocation(GL_location, "vPosition");
             vColor = glGetAttribLocation(GL_location,"vColor");
@@ -24,7 +23,6 @@ class Shader{
             if (
             ModelViewMatrix == -1 || 
             CameraViewMatrix == -1 ||
-            ProjectionMatrix == -1 ||
             shade == -1 ||
             vPosition == -1 ||
             vColor == -1 ||
@@ -37,7 +35,6 @@ class Shader{
         
         inline GLint modelViewMatrix(){return ModelViewMatrix;}
         inline GLint cameraViewMatrix(){return CameraViewMatrix;}
-        inline GLint projectionMatrix(){return ProjectionMatrix;}
         inline GLint isShaded(){return shade;}
 
 
@@ -55,7 +52,6 @@ class Shader{
         GLint vPosition; // attribute vertex postionts
             GLint ModelViewMatrix;//mat4
             GLint CameraViewMatrix;//mat4
-            GLint ProjectionMatrix;//mat4
             GLint shade;
 
         // Lighting model

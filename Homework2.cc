@@ -49,11 +49,7 @@ extern "C" void idleanimation(){
   string newtitle = camAt.str() + "  " + cameye.str() ;
   glutSetWindowTitle(newtitle.c_str());
   
-  
-  for (auto p : scene.pieces){
-    p->update(.15,.04);
-    //p->updatewithtime(timefactor);
-  }
+  scene.update(timefactor);
 
   lasttime=time;
   glutPostRedisplay();
@@ -76,12 +72,7 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   //033 escape key
   case 033: case 'q': case 'Q': exit(EXIT_SUCCESS);break;
 
-  case '+': scene.incr*=2.0; break;
-  case '-': scene.incr/=2.0; break;
 
-  case 'z': scene.zNear  *= 1.1; scene.zFar /= 1.1; break;
-  case 'Z': scene.zNear /= 1.1; scene.zFar *= 1.1;  break;
-  
   // I believe i can fly 
   case 'Y': scene.camera.moveup(stepsize);   break;
   case 'y': scene.camera.movedown(stepsize); break;
@@ -105,25 +96,9 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'o': scene.pieces[0]->slowDown(10); break;
   case 'O': scene.pieces[0]->speedUp(10); break;
 
-  case 'v': 
-    scene.fovy-=5; 
-    if (scene.fovy < 0) {
-      // Min angle of view 1 degree
-      scene.fovy = 1;
-    }
-    break;
-  case 'V': scene.fovy+=5; break;
-    if (scene.fovy > 179) {
-      // Max angle of view 179 degrees
-      scene.fovy = 179;
-    }
-    break;
-
   case ' ':  // reset values to their defaults
 
-    scene.incr=0.1;
-
-    break;
+  break;
   
   }
 
@@ -136,18 +111,9 @@ extern "C" void reshape(int width, int height){
 }
 extern "C" void display(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //send Camera matrix to gpu
-  mat4 cv = scene.camera.generate_view_matrix();
-  glUniformMatrix4fv(scene.shader.cameraViewMatrix(), 1, GL_TRUE, cv);
-  //send Prespective matrix to gpu
-  mat4  p = Perspective(scene.fovy, scene.aspect, scene.zNear, scene.zFar) ;
-  glUniformMatrix4fv(scene.shader.projectionMatrix(), 1, GL_TRUE, p);
-   
-  for (auto piece : scene.pieces){
-    piece->draw();
-  }
-  scene.board->draw();
-  
+
+  scene.draw();
+
   glutSwapBuffers();
 }
 extern "C" void lookaround(int x, int y){
@@ -179,7 +145,7 @@ int main(int argc, char **argv){
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(512, 512);
-  glutCreateWindow("Color Cube");
+  glutCreateWindow("");
 
   glewInit();
 

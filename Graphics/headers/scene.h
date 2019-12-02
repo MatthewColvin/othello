@@ -17,9 +17,10 @@ using std::string;
 class Scene{
 	public:
 		void init();
-		mat4 GeneratePrespectiveMatrix();
+		void draw();
+		void update(int timefactor);
 		
-		GLfloat incr=0.1;
+		
 		// For perspective camera
 		GLfloat fovy=45;
 		GLfloat aspect=1.0;
@@ -29,18 +30,8 @@ class Scene{
 		GLfloat zNear = 0.1;
 		GLfloat zFar = 300.0;		
 
-				// Implementing a door that opens by swinging
-		GLfloat doorAngle = 0.0;       // Angle of cube's door's rotation.
-		GLfloat doorAngleIncr = 30.0;   // Amount to increment Angle of cube's
-						// door's rotation.
-		GLfloat trans = 0.0;   // trans of 2nd cube.
-		GLfloat transinc = 1.0;// trans increment of 2nd cube.
-
-		/// end temp public
-
 		Camera camera;
 		Shader shader;
-
 
 		vector<Piece*> pieces;
 		Board *board;
