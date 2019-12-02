@@ -97,7 +97,10 @@ void Scene::draw(){
   for (auto piece : pieces){
     piece->draw();
   }
+  
+  glUniform1i(shader.isShaded(),1);
   board->draw();
+  glUniform1i(shader.isShaded(),0);
 }
 void Scene::update(int timefactor){
   for (auto p : pieces){
