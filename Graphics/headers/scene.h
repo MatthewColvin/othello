@@ -7,6 +7,8 @@
 #include "piece.h"
 #include "board.h"
 
+#include "othello.h"
+
 using std::string;
 // struct shapedata{
 // 	vector<point4> AllVertices;
@@ -14,13 +16,13 @@ using std::string;
 // 	vector<norm4> AllNormals;
 // };
 
-class Scene{
+class Scene : public main_savitch_14::othello{
 	public:
 		void init();
 		void draw();
 		void update(int timefactor);
-		
-		
+
+
 		// For perspective camera
 		GLfloat fovy=45;
 		GLfloat aspect=1.0;
@@ -35,6 +37,8 @@ class Scene{
 
 		vector<Piece*> pieces;
 		Board *board;
+
+
 
 	private:
 		vector<point4> AllVertices;

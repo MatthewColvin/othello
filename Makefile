@@ -11,7 +11,7 @@
 srcpth = ./Graphics/source/
 headerpth = ./Graphics/headers/
 angel = ./Graphics/angel/include/
-
+gamelogicpth = ./GameLogic/
 # What compiler do you want to use for c++ files?
 CC = g++
 
@@ -27,7 +27,7 @@ LDLIBS = -lGL -lGLU  -lGLEW /usr/lib/x86_64-linux-gnu/libglut.so.3
 InitShader = /home/mcolvin/Desktop/othello/Graphics/angel/Common/InitShader.o
 
 # Where to find the include files
-INCS = -I /usr/include/ -I $(angel) -I $(headerpth)
+INCS = -I /usr/include/ -I $(angel) -I $(headerpth) -I $(gamelogicpth)
 
 # options to pass to the compiler (all the gcc ones, and the where to
 # find the includes).
@@ -35,13 +35,40 @@ OPTIONS=$(GCC_OPTIONS) $(INCS) -Wall -std=c++17
 
 OBJECTS = $(patsubst %.cc,%,$(wildcard *.cc)) 
 
-all: homework2
+
+
+all: Termobjs homework2
 
 release: all clean
 
 run: release
 	./homework2
 
+
+##############Terminal game make##########################
+
+Termbuild:Termgame
+
+Termobjs: game.o othello.o termspace.o
+
+Termgame: main.o Termobjs
+	g++ main.o game.o othello.o termspace.o -o game
+
+main.o: $(gamelogicpth)main.cpp
+	g++ -c $(gamelogicpth)main.cpp
+
+game.o:	$(gamelogicpth)game.cpp $(gamelogicpth)game.h
+	g++ -c $(gamelogicpth)game.cpp
+
+othello.o: $(gamelogicpth)othello.cpp $(gamelogicpth)colors.h space.o
+	g++ -c $(gamelogicpth)othello.cpp
+
+termspace.o: $(gamelogicpth)space.h $(gamelogicpth)space.cpp
+	g++ -c $(gamelogicpth)space.cpp -o termspace.o
+	
+###########################################################
+
+################Start Graphic code compliation###########
 camera.o: $(srcpth)camera.cc $(headerpth)camera.h
 	$(CC) $(srcpth)camera.cc -c $(OPTIONS)
 scene.o :$(srcpth)scene.cc $(headerpth)scene.h
@@ -92,4 +119,4 @@ homework2: object.o    $(headerpth)object.h    \
 clean:
 	rm -f $(OBJECTS) *.o *~
 squeakyclean: clean
-	rm -f homework2 
+	rm -f homework2 game

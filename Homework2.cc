@@ -73,6 +73,9 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 033: case 'q': case 'Q': exit(EXIT_SUCCESS);break;
 
 
+  case 'u':scene.play();
+
+
   // I believe i can fly 
   case 'Y': scene.camera.moveup(stepsize);   break;
   case 'y': scene.camera.movedown(stepsize); break;
