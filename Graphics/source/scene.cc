@@ -92,15 +92,21 @@ void Scene::init(){
 void Scene::draw(){
   //send Camera matrix to gpu
   mat4 cv = camera.generate_view_matrix();
-  glUniformMatrix4fv(shader.cameraViewMatrix(), 1, GL_TRUE, cv);
+  shader.setcameraViewMatrix(cv);
   
+  shader.setlighting(
+    camera.get_eye(),
+    vec4(0,10,0,0),
+    vec4(1,1,1,1),
+    0.5,0.5
+  );
+  
+  shader.Shade(true);
   for (auto piece : pieces){
     piece->draw();
   }
-  
-  glUniform1i(shader.isShaded(),1);
+
   board->draw();
-  glUniform1i(shader.isShaded(),0);
 }
 void Scene::update(int timefactor){
   for (auto p : pieces){
