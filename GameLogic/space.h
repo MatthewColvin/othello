@@ -14,6 +14,7 @@ public:
 	bool const are_same(space sp)const;
 	bool const is_white()const;
 	bool const is_black()const;
+	bool const is_neutral()const;
 
 	void output(std::ostream& out);
 	friend std::ostream& operator<<(std::ostream& os,space sp);

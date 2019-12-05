@@ -34,7 +34,9 @@ void Scene::init(){
       shader.modelViewMatrix(),AllVertices.size())
     );
   }
- 
+
+  restart();
+
   // Now send the data to the GPU
     glEnableVertexAttribArray(shader.VertPosition());
     glVertexAttribPointer(
@@ -127,25 +129,48 @@ void Scene::display_status(bool printTerminalBoard){
 
 void Scene::restart(){
   othello::restart();
-  
+  initailpeiceplacement();
 }
 
 void Scene::initailpeiceplacement(){
-  
+  static int x,y,z =0;
+  pieces[0]->setpostiton("e4",true);pieces[0]->settoblack();
+  pieces[1]->setpostiton("d4",true);pieces[1]->settowhite();
+  pieces[2]->setpostiton("d5",true);pieces[2]->settoblack();
+  pieces[3]->setpostiton("e5",true);pieces[3]->settowhite();
+
+  for (long unsigned int i=4; i<pieces.size(); i++){
+    if(i < (pieces.size()-4)/2){
+      z += board->spacesize();
+      x = board->spacesize()*-1;
+      if(i%8 == 0){ z=0; y += 1;}  
+      pieces[i]->set_position(x,y,z);
+    }else{
+      if(i == 30){y =0;}
+      z += board->spacesize();
+      x = board->spacesize()*8;
+      if(i%8 == 0){ z=0; y += 1;}  
+      pieces[i]->set_position(x,y,z);
+      pieces[i]->settowhite();
+    }
+  }
 }
 
-vec3 Scene::othelloStrMvToPostition(string move){
-  	int coloum, row; // colums are numbers //rows are letters
-		//row and coloum will represent the actual array indeces
-		if (isalpha(move[0])) { row = toupper(move[0]);     row -= 65;}
-		if (isdigit(move[0])) { coloum = move[0];          coloum -= 49;}
-		if (isalpha(move[1])) { row = toupper(move[1]);     row -= 65;}
-		if (isdigit(move[1])) { coloum = move[1];           coloum -= 49;}
+void Scene::updatetonewboard(){
 
-    return(vec3(row,coloum,0));
 }
+void Scene::animateupdatetonewboard(){
+  for(int i=0;i<8;i++){
+    for(int j=0;j<8;j++){
+      if(othello::board[i][j].is_neutral()){
 
-void Scene::updatetonewboard(){};
-void Scene::animateupdatetonewboard(){};
+      }else if(othello::board[i][j].is_black()){
 
+      }else if(othello::board[i][j].is_white()){
 
+      }else{
+        std::cerr << "Othello board not handeled correctly" << std::endl;
+      }
+    }
+  }
+}

@@ -54,7 +54,7 @@ extern "C" void idleanimation(){
   ///////////////////////////////////////////////
 
 
-  string newtitle = peiceloc.str() ;
+  string newtitle = camAt.str() + cameye.str() ;
   glutSetWindowTitle(newtitle.c_str());
   
   scene.update(timefactor);

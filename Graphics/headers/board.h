@@ -12,6 +12,7 @@ class Board : public object{
         
         void draw();
 
+        inline float spacesize(){ return spaces[0][0]->getsize();}
     private:
         color4 boardcolor = color4(237.0/255.0, 168.0/255.0, 83.0/255.0,1);
         vector<vector<Space*>> spaces;

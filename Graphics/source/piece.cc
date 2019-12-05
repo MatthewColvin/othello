@@ -28,24 +28,54 @@ void Piece::draw(){
     spheres[1]->draw();
 }
 
+// movement and placement ///////////////
+    void Piece::rotatetoblack(){
+        set_goal_orientation(vec3(0,0,0));
+    }
+    void Piece::settoblack(){
+        set_goal_orientation(vec3(0,0,0));
+        set_orientation(vec3(0,0,0));
+    }
 
-void Piece::rotatetoblack(){
+    void Piece::rotatetowhite(){
+        set_goal_orientation(179.5,0,0);
+    }
+    void Piece::settowhite(){
+        set_goal_orientation(vec3(179.5,0,0));
+        set_orientation(vec3(179.5,0,0));
+    }
 
-}
-void Piece::settoblack(){
+    void Piece::setpostiton(string othelloStrmove,bool placed){
+        vec2 newpostion = othelloStrMvToPostition(othelloStrmove);
+        float x,y,z = 0;
+        x = newpostion.x * 3;
+        z = newpostion.y * 3;
+        if(placed){
+            posOnboard = newpostion;
+            y=0;
+        }else{
+            y=1;
+        }
+        set_position(x,y,z);
+    } 
+    void Piece::translatetopostion(string othelloStrmove,bool placed){
+        vec2 newpostion = othelloStrMvToPostition(othelloStrmove);
+        if(placed){
+            posOnboard = newpostion;
+            set_goal_position(vec3(newpostion.x,0,newpostion.y));
+        }else{
+            set_goal_orientation(vec3(newpostion.x,1,newpostion.y));
+        }
+    }
+/////////////////////////////////////////
 
-}
+vec2 Piece::othelloStrMvToPostition(string move){
+  	int coloum, row; // colums are numbers //rows are letters
+		//row and coloum will represent the actual array indeces
+		if (isalpha(move[0])) { row = toupper(move[0]);     row -= 65;}
+		if (isdigit(move[0])) { coloum = move[0];          coloum -= 49;}
+		if (isalpha(move[1])) { row = toupper(move[1]);     row -= 65;}
+		if (isdigit(move[1])) { coloum = move[1];           coloum -= 49;}
 
-void Piece::rotatetowhite(){
-
-}
-void Piece::settowhite(){
-
-}
-
-void Piece::translatetopostion(string othelloStrmove,bool placed){
-
-} 
-void Piece::setpostiton(string othelloStrmove,bool placed){
-
+    return(vec2(row,coloum));
 }

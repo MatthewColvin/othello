@@ -23,7 +23,6 @@ class Scene : private main_savitch_14::othello{
 		void update(int timefactor);
 		void display_status(bool printTerminalBoard);
 		
-		vec3 othelloStrMvToPostition(string move);
 		void restart();
 			void initailpeiceplacement();
 		//

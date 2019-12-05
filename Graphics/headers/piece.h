@@ -24,9 +24,14 @@ class Piece : public object{
         void translatetopostion(string othelloStrmove,bool placed);  
         void setpostiton(string othelloStrmove,bool placed);
         
+        vec2 postiononboard(){return posOnboard;}
+
     private:
         sphere* spheres[2];
         vec3 scalefactor = vec3(1,.4,1); // used to make the piece look kinda smashed
+
+        vec2 othelloStrMvToPostition(string move);
+        vec2 posOnboard = vec2(-1,-1);
 };
 
 #endif

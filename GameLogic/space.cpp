@@ -70,6 +70,11 @@ bool const space::is_black()const
 	if (black && !white) { return true; }
 	return false;
 }
+bool const space::is_neutral()const
+{
+	if(neutral) {return true;}
+	return false;
+}
 
 void space::output(std::ostream& out)
 {

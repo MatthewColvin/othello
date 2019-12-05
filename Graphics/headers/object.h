@@ -42,6 +42,7 @@ class object{
         // Rotation ////////////////////////
             void set_goal_orientation(EulerAngles neworientation);
             void set_goal_orientation(double roll, double pitch, double yaw);
+            void set_orientation(EulerAngles neworientation);
 
             inline float rotationSpeed(){return rotationspeed / 10000;}
             inline void speedUpRotation(int amount){rotationspeed += amount;}
@@ -102,7 +103,6 @@ class object{
             EulerAngles getEulerAngles(mat4 &R);
             EulerAngles getEulerAngles(Quaternion q);
             
-            void set_orientation(EulerAngles neworientation);
             // ones i will be using internally for animation.
             void set_orientation(Quaternion q);
             

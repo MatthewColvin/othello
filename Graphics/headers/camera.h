@@ -44,8 +44,8 @@ class Camera{
             GLfloat zNear = 0.1;
             GLfloat zFar = 300.0;	
         //camera pos and viewing direction 
-            vec4 eye = vec4(-30,20,-15,0);
-            vec4 at = vec4(4,-2,2.5,0);
+            vec4 eye = vec4(20,21,-26,0);
+            vec4 at = vec4(-1.2,-2.4,4.3,0);
             vec3 upvec = vec3(0.0, 1.0, 0.0);
 
             float cameraangleiny = 0;
