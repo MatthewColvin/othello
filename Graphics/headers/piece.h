@@ -24,7 +24,7 @@ class Piece : public object{
         void translatetopostion(string othelloStrmove,bool placed);  
         void setpostiton(string othelloStrmove,bool placed);
         
-        vec2 postiononboard(){return posOnboard;}
+        vec2 boardposition(){return posOnboard;}
 
     private:
         sphere* spheres[2];

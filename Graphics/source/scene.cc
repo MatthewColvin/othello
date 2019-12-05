@@ -130,6 +130,7 @@ void Scene::display_status(bool printTerminalBoard){
 void Scene::restart(){
   othello::restart();
   initailpeiceplacement();
+  animateupdatetonewboard();
 }
 
 void Scene::initailpeiceplacement(){
@@ -155,22 +156,63 @@ void Scene::initailpeiceplacement(){
     }
   }
 }
-
 void Scene::updatetonewboard(){
-
-}
-void Scene::animateupdatetonewboard(){
-  for(int i=0;i<8;i++){
-    for(int j=0;j<8;j++){
-      if(othello::board[i][j].is_neutral()){
-
-      }else if(othello::board[i][j].is_black()){
-
-      }else if(othello::board[i][j].is_white()){
-
-      }else{
-        std::cerr << "Othello board not handeled correctly" << std::endl;
+  bool foundpiece = false;
+  for(int row=0;row<8;row++){
+    for(int col=0;col<8;col++){
+      if(othello::board[row][col].is_black()){
+        for(auto piece : pieces){
+          vec2 currentloc = piece->boardposition();
+          if(currentloc.x == row && currentloc.y == col){
+            piece->settoblack();
+            foundpiece = true;
+          }
+        }
       }
+      else if(othello::board[row][col].is_white()){
+        for(auto piece : pieces){
+          vec2 currentloc = piece->boardposition();
+          if(currentloc.x == row && currentloc.y == col){
+            piece->settowhite();
+            foundpiece = true;
+          }
+        }
+      }
+      else if(othello::board[row][col].is_neutral()){
+        foundpiece = true;
+      }
+      if(!foundpiece){std::cerr << "Board algorithm failed on" << row << "  " << col << std::endl;} 
     }
   }
 }
+void Scene::animateupdatetonewboard(){
+  bool foundpiece = false;
+  for(int row=0;row<8;row++){
+    for(int col=0;col<8;col++){
+      if(othello::board[row][col].is_black()){
+        for(auto piece : pieces){
+          vec2 currentloc = piece->boardposition();
+          if(currentloc.x == row && currentloc.y == col){
+            piece->rotatetoblack();
+            foundpiece = true;
+          }
+        }
+      }
+      else if(othello::board[row][col].is_white()){
+        for(auto piece : pieces){
+          vec2 currentloc = piece->boardposition();
+          if(currentloc.x == row && currentloc.y == col){
+            piece->rotatetowhite();
+            foundpiece = true;
+          }
+        }
+      }
+      else if(othello::board[row][col].is_neutral()){
+        foundpiece = true;
+      }
+      if(!foundpiece){std::cerr << "Board algorithm failed on" << row << "  " << col << std::endl;} 
+    }
+  }
+}
+
+ 
