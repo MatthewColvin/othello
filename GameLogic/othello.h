@@ -29,9 +29,9 @@ namespace main_savitch_14
 		
 	private:
 		std::string pre_move;
-		space board[8][8];
 		int skip;
-		
+	protected:
+		space board[8][8];
 		// board[rows][coloums] very important
 	};
 }

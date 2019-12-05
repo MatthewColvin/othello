@@ -30,7 +30,9 @@ class object{
         void Translate(float xamount,float yamount, float zamount);
         // Translation /////////////////////
             void set_goal_position(vec3 newPosition);
-
+            
+            inline vec3 get_position(){return vec3(x,y,z);}     
+            inline void set_position(float x, float y, float z){ set_goal_position(vec3(x,y,z)); set_position(vec3(x,y,z));}
             inline float translationSpeed(){return translationspeed / 10000;}
             inline void speedUp(int amount){translationspeed += amount;}
             inline void slowDown(int amount){translationspeed -= amount;}
@@ -62,11 +64,12 @@ class object{
             float Goalx=0; float Goaly=0; float Goalz=0;
             mat4 translationmatrix ;
             
+            void set_position(vec3 newPosition);
+
             bool isTraveling();
             float distanceToGoal();
-            void set_position(vec3 newPosition);
             
-            inline vec3 get_position(){return vec3(x,y,z);}     
+           // inline vec3 get_position(){return vec3(x,y,z);}     
             inline vec3 get_goal_position(){return vec3(Goalx,Goaly,Goalz);}
             
             inline float XdistToGoal(){return Goalx - x;}

@@ -27,3 +27,25 @@ void Piece::draw(){
     );
     spheres[1]->draw();
 }
+
+
+void Piece::rotatetoblack(){
+
+}
+void Piece::settoblack(){
+
+}
+
+void Piece::rotatetowhite(){
+
+}
+void Piece::settowhite(){
+
+}
+
+void Piece::translatetopostion(string othelloStrmove,bool placed){
+
+} 
+void Piece::setpostiton(string othelloStrmove,bool placed){
+
+}

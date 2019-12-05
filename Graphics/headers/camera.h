@@ -28,6 +28,8 @@ class Camera{
         inline mat4 GeneratePrespectiveMatrix(){
             return(Perspective(fovy, aspect,zNear,zFar));
         };
+        inline void setAspect(GLfloat newAspect){aspect = newAspect;};
+        inline void setZdist(GLfloat zNear,GLfloat zFar){ Camera::zNear = zNear; Camera::zFar = zFar; }
 
         inline float get_cameraYangel(){return cameraangleiny;};
         inline float get_cameraXangel(){return cameraangleinx;};

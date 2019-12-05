@@ -16,37 +16,36 @@ using std::string;
 // 	vector<norm4> AllNormals;
 // };
 
-class Scene : public main_savitch_14::othello{
+class Scene : private main_savitch_14::othello{
 	public:
 		void init();
 		void draw();
 		void update(int timefactor);
-
-
-		// For perspective camera
-		GLfloat fovy=45;
-		GLfloat aspect=1.0;
-		GLfloat angle = 0.0;
-
-		// Camera and view parameters
-		GLfloat zNear = 0.1;
-		GLfloat zFar = 300.0;		
+		void display_status(bool printTerminalBoard);
+		
+		vec3 othelloStrMvToPostition(string move);
+		void restart();
+			void initailpeiceplacement();
+		//
 
 		Camera camera;
+			inline void setAspect(GLfloat aspectRatio){camera.setAspect(aspectRatio);}
+		// 
+
 		Shader shader;
 
 		vector<Piece*> pieces;
-		Board *board;
 
+		Board *board;
 
 
 	private:
 		vector<point4> AllVertices;
 		vector<color4> AllColors;
 		vector<norm4> AllNormals;
-		
-		
+		//piece movement 
+			void updatetonewboard();
+			void animateupdatetonewboard();
 
-
+	
 };
-

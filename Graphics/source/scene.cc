@@ -27,10 +27,13 @@ void Scene::init(){
     shader.modelViewMatrix(),AllVertices.size()
   );
 
-  pieces.push_back(new Piece(
-    AllVertices,AllColors,AllNormals,
-    shader.modelViewMatrix(),AllVertices.size())
-  );
+
+  for(int i = 0; i < 64; i++){
+    pieces.push_back(new Piece(
+      AllVertices,AllColors,AllNormals,
+      shader.modelViewMatrix(),AllVertices.size())
+    );
+  }
  
   // Now send the data to the GPU
     glEnableVertexAttribArray(shader.VertPosition());
@@ -114,3 +117,35 @@ void Scene::update(int timefactor){
     //p->updatewithtime(timefactor);
   }
 }
+
+void Scene::display_status(bool printTerminalBoard){
+  if (printTerminalBoard){
+    othello::display_status();// call base class 
+  } 
+  draw();
+}
+
+void Scene::restart(){
+  othello::restart();
+  
+}
+
+void Scene::initailpeiceplacement(){
+  
+}
+
+vec3 Scene::othelloStrMvToPostition(string move){
+  	int coloum, row; // colums are numbers //rows are letters
+		//row and coloum will represent the actual array indeces
+		if (isalpha(move[0])) { row = toupper(move[0]);     row -= 65;}
+		if (isdigit(move[0])) { coloum = move[0];          coloum -= 49;}
+		if (isalpha(move[1])) { row = toupper(move[1]);     row -= 65;}
+		if (isdigit(move[1])) { coloum = move[1];           coloum -= 49;}
+
+    return(vec3(row,coloum,0));
+}
+
+void Scene::updatetonewboard(){};
+void Scene::animateupdatetonewboard(){};
+
+
