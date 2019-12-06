@@ -56,16 +56,20 @@ void Piece::draw(){
         }else{
             y=1;
         }
-        set_position(x,y,z);
+        set_position(z,y,x);
     } 
     void Piece::translatetopostion(string othelloStrmove,bool placed){
         vec2 newpostion = othelloStrMvToPostition(othelloStrmove);
+        float x,y,z = 0;
+        x = newpostion.x * 3;
+        z = newpostion.y * 3;
         if(placed){
             posOnboard = newpostion;
-            set_goal_position(vec3(newpostion.x,0,newpostion.y));
+            y=0;
         }else{
-            set_goal_orientation(vec3(newpostion.x,1,newpostion.y));
+            y=1;
         }
+        set_goal_position(vec3(z,y,x));
     }
 /////////////////////////////////////////
 

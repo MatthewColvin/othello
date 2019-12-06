@@ -323,8 +323,8 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
       float theta, st, sut, sout, coeff1, coeff2;
 
       if (dotproduct > .99999999){ // if the distance is to close just retun the goal orientation.
-        std::cout << "Close to location setting it to goal" << std::endl;
-        std::cout << "Goal orienation" << getEulerAngles(q2) << std::endl;
+        // std::cout << "Close to location setting it to goal" << std::endl;
+        // std::cout << "Goal orienation" << getEulerAngles(q2) << std::endl;
         return q2;
       }
 
@@ -344,14 +344,14 @@ void object::Rotate(float yawdegrees,float pitchdegrees,float rolldegrees){
       qr.y = coeff1*q1.y + coeff2*q2.y;
       qr.z = coeff1*q1.z + coeff2*q2.z;
       qr.w = coeff1*q1.w + coeff2*q2.w;
-      {using std::cout; using std::endl;
-        cout << "currentorientation " << currentorientation << endl;
-        cout << "goalorientaiton" << goalorientation << endl;
+      // {using std::cout; using std::endl;
+      //   cout << "currentorientation " << currentorientation << endl;
+      //   cout << "goalorientaiton" << goalorientation << endl;
 
-        cout << "old quat->eulerangles" << getEulerAngles(q1) << endl; 
-        cout << "goal quat->eulerangles" << getEulerAngles(q2) << endl;
-        cout << "slerped eulerangles" << getEulerAngles(qr) << endl << endl;
-      }
+      //   cout << "old quat->eulerangles" << getEulerAngles(q1) << endl; 
+      //   cout << "goal quat->eulerangles" << getEulerAngles(q2) << endl;
+      //   cout << "slerped eulerangles" << getEulerAngles(qr) << endl << endl;
+      // }
       return (qr);
     }
 void object::Scale(float xamount, float yamount, float zamount){
@@ -385,8 +385,8 @@ void object::update(float translationamountpercall,float rotationamountpercall){
     }
 }
 void object::updatewithtime(float timeseed){
-    float translationtimescale = .005;
-    float rotationtimescale = 0.0005;
+    float translationtimescale = .01;
+    float rotationtimescale = 0.001;
     update(timeseed*translationtimescale,timeseed*rotationtimescale);
 }
 

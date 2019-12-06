@@ -115,8 +115,8 @@ void Scene::draw(){
 }
 void Scene::update(int timefactor){
   for (auto p : pieces){
-    p->update(.15,.04);
-    //p->updatewithtime(timefactor);
+    //p->update(.15,.04);
+    p->updatewithtime(timefactor);
   }
 }
 
@@ -131,6 +131,7 @@ void Scene::restart(){
   othello::restart();
   initailpeiceplacement();
   animateupdatetonewboard();
+  legalmoves = currentlegalmoves();
 }
 
 void Scene::initailpeiceplacement(){
@@ -140,14 +141,15 @@ void Scene::initailpeiceplacement(){
   pieces[2]->setpostiton("d5",true);pieces[2]->settoblack();
   pieces[3]->setpostiton("e5",true);pieces[3]->settowhite();
 
+  curblackpieceindex = 4; 
   for (long unsigned int i=4; i<pieces.size(); i++){
-    if(i < (pieces.size()-4)/2){
+    if(i < ((pieces.size()-4)/2 + 4)){
       z += board->spacesize();
       x = board->spacesize()*-1;
       if(i%8 == 0){ z=0; y += 1;}  
       pieces[i]->set_position(x,y,z);
     }else{
-      if(i == 30){y =0;}
+      if(i == 34){y =0; currentpieceindex = curwhitepieceindex = i;}
       z += board->spacesize();
       x = board->spacesize()*8;
       if(i%8 == 0){ z=0; y += 1;}  
@@ -215,4 +217,56 @@ void Scene::animateupdatetonewboard(){
   }
 }
 
- 
+void Scene::make_move(){
+  othello::make_move(legalmoves[currentmoveindex]);
+  currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
+  legalmoves = currentlegalmoves();
+  setupnextpiece();
+  animateupdatetonewboard();
+}
+
+void Scene::setupnextpiece(){
+  if(currentpieceindex == curwhitepieceindex){
+    currentpieceindex = curblackpieceindex;
+    curwhitepieceindex ++;
+  }else if(currentpieceindex == curblackpieceindex){
+    currentpieceindex = curwhitepieceindex;
+    curblackpieceindex++;
+  }
+  translatepiecetonextlegalpostition();
+}
+
+Piece* Scene::currentpiece(){
+  return pieces[currentpieceindex];
+}
+std::vector<string> Scene::currentlegalmoves(){ 
+  std::queue<string> legalmoves;
+  compute_moves(legalmoves); 
+  std::vector<string> legalmovesvec;
+  while(!legalmoves.empty()){
+    legalmovesvec.push_back(legalmoves.front());
+    legalmoves.pop();
+  }
+  return legalmovesvec;
+}
+
+void Scene::translatepiecetonextlegalpostition(){
+  currentmoveindex++;
+  if(currentmoveindex >= legalmoves.size() ){
+    currentmoveindex %= legalmoves.size();
+  }else if(currentmoveindex < 0 ){ 
+    currentmoveindex = 0;
+  }
+  string nextmove = legalmoves[currentmoveindex];
+  currentpiece()->translatetopostion(nextmove,false);
+}
+void Scene::translatepiecetopreviouslegalpostion(){
+  currentmoveindex--;
+  if(currentmoveindex > legalmoves.size() ){
+    currentmoveindex %= legalmoves.size();
+  }else if(currentmoveindex < 0 ){ 
+    currentmoveindex = 0;
+  } 
+  string nextmove = legalmoves[currentmoveindex];
+  currentpiece()->translatetopostion(nextmove,false);
+}

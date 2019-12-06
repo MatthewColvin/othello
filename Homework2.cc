@@ -63,21 +63,15 @@ extern "C" void idleanimation(){
   glutPostRedisplay();
 }
 extern "C" void special(int key, int x, int y){
-  switch(key) {
-  // case GLUT_KEY_UP:    scene.camera.turnup(camrotationamount); break;
-  // case GLUT_KEY_DOWN:  scene.camera.turndown(camrotationamount);    break;
-  // case GLUT_KEY_LEFT:  scene.camera.turnleft(camrotationamount); break;
-  // case GLUT_KEY_RIGHT:  scene.camera.turnright(camrotationamount); break;
-  case GLUT_KEY_UP:    scene.pieces[0]->Translate(0,0,1);   break;  
-  case GLUT_KEY_DOWN:  scene.pieces[0]->Translate(0,0,-1);   break;   
-  case GLUT_KEY_LEFT:  scene.pieces[0]->Translate(-1,0,0);   break;   
-  case GLUT_KEY_RIGHT: scene.pieces[0]->Translate(1,0,0);   break;   
-  }
+  switch(key) { 
+  case GLUT_KEY_LEFT: scene.translatepiecetopreviouslegalpostion(); break;
+  case GLUT_KEY_RIGHT: scene.translatepiecetonextlegalpostition(); break;
+  } 
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
   switch(key) {
   //033 escape key
-  case 033: case 'q': case 'Q': exit(EXIT_SUCCESS);break;
+  case 033: exit(EXIT_SUCCESS);break;
   
   // standard walking movement
   case 'w': scene.camera.moveforward(stepsize); break;
@@ -85,27 +79,11 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 'a': scene.camera.moveright(stepsize); break;
   case 'd': scene.camera.moveleft(stepsize);  break;
 
-  case 'u': scene.pieces[0]->Translate(0,1,0); break;
-  case 'U': scene.pieces[0]->Translate(0,-1,0); break;
+  case 'B':scene.display_status(true); break;
 
-  case 'v': scene.pieces[0]->Rotate(10,0,0); break;
-  case 'V': scene.pieces[0]->Rotate(-10,0,0); break;
-  case 'N': scene.pieces[0]->Rotate(0,-10,0); break;
-  case 'n': scene.pieces[0]->Rotate(0,10,0); break;
-  case 'M': scene.pieces[0]->Rotate(0,0,-10); break;
-  case 'm': scene.pieces[0]->Rotate(0,0,10); break;
-
-
-  case 't':scene.pieces[0]->Tests();
-  case 'B':scene.display_status(true);
-
-  case 'o': scene.pieces[0]->slowDown(10); break;
-  case 'O': scene.pieces[0]->speedUp(10); break;
-
-  case ' ':  // reset values to their defaults
-
-  break;
-  
+  case ' ':  
+    scene.make_move();
+    break;
   }
 
   glutPostRedisplay();
