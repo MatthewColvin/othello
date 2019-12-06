@@ -116,7 +116,7 @@ void Scene::draw(){
 void Scene::update(int timefactor){
   for (auto p : pieces){
     //p->update(.15,.04);
-    p->updatewithtime(timefactor);
+    p->updatewithtime(timefactor*2);
   }
 }
 
@@ -142,17 +142,18 @@ void Scene::initailpeiceplacement(){
   pieces[3]->setpostiton("e5",true);pieces[3]->settowhite();
 
   curblackpieceindex = 4; 
+  y = 5;
   for (long unsigned int i=4; i<pieces.size(); i++){
     if(i < ((pieces.size()-4)/2 + 4)){
       z += board->spacesize();
       x = board->spacesize()*-1;
-      if(i%8 == 0){ z=0; y += 1;}  
+      if(i%8 == 0){ z=0; y -= 1;}  
       pieces[i]->set_position(x,y,z);
     }else{
-      if(i == 34){y =0; currentpieceindex = curwhitepieceindex = i;}
+      if(i == 34){y = 5; currentpieceindex = curwhitepieceindex = i;}
       z += board->spacesize();
       x = board->spacesize()*8;
-      if(i%8 == 0){ z=0; y += 1;}  
+      if(i%8 == 0){ z=0; y -= 1;}  
       pieces[i]->set_position(x,y,z);
       pieces[i]->settowhite();
     }
