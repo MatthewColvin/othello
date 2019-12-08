@@ -26,7 +26,7 @@ namespace main_savitch_14
 		virtual void restart();
 		virtual who winning()const;
 		virtual std::string get_user_move()const;
-		
+	
 	private:
 		std::string pre_move;
 		int skip;

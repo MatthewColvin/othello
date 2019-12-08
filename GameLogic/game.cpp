@@ -79,7 +79,7 @@ namespace main_savitch_14
 	int game::eval_with_lookahead(int look_ahead, int beat_this)
 		// Evaluate a board position with lookahead.
 		// --int look_aheads:  How deep the lookahead should go to evaluate the move.
-		// --int beat_this: Value of another move that we’re considering. If the
+		// --int beat_this: Value of another move that weï¿½re considering. If the
 		// current board position can't beat this, then cut it short.
 		// The return value is large if the position is good for the player who just
 		// moved. 
@@ -126,6 +126,9 @@ namespace main_savitch_14
 
 	void game::make_computer_move()
 	{
+		make_move(get_computer_move());
+	}
+	string game::get_computer_move(){
 		queue<string> moves;
 		int value;
 		int best_value;
@@ -153,8 +156,7 @@ namespace main_savitch_14
 			moves.pop();
 		}
 
-		// Make the best move.
-		make_move(best_move);
+		return best_move;
 	}
 
 	void game::make_human_move()

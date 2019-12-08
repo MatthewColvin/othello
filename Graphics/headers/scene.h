@@ -7,6 +7,10 @@
 #include "piece.h"
 #include "board.h"
 #include <queue>
+#include <unistd.h>
+
+#include <stdio.h>
+#include <pthread.h>
 
 #include "othello.h"
 
@@ -21,13 +25,15 @@ class Scene : private main_savitch_14::othello{
 	public:
 		void init();
 		void draw();
-		void update(int timefactor);
+		void update(int elapsedtime);
+		
 		
 		// Old othello class functions
 			void display_status(bool printTerminalBoard);
 			void make_move();
 			void restart();
 				void initailpeiceplacement();
+				void animateToinitialplacement();
 		//
 
 		Camera camera;
@@ -47,19 +53,20 @@ class Scene : private main_savitch_14::othello{
 		vector<point4> AllVertices;
 		vector<color4> AllColors;
 		vector<norm4> AllNormals;
+		unsigned int lasttime=0; // gets updated everytime update is called
 		//piece movement 
 			void updatetonewboard();
 			void animateupdatetonewboard();
-			int curwhitepieceindex;
-			int curblackpieceindex;
-			int currentpieceindex;
+			long unsigned int curwhitepieceindex;
+			long unsigned int curblackpieceindex;
+			long unsigned int currentpieceindex;
 			
-			int currentmoveindex;
+			long unsigned int currentmoveindex;
 			std::vector<string> currentlegalmoves();
 			std::vector<string> legalmoves;
 			void setupnextpiece();
-
-
+			void computermoveifneeded();
+			int timesincelastmove;
 			
 			
 };

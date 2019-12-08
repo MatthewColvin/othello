@@ -28,7 +28,6 @@ extern "C" void updatemousexy(int x,int y);
 GLint lasttime=0;
 extern "C" void idleanimation(){
   int time = glutGet(GLUT_ELAPSED_TIME);
-  int timefactor = time - lasttime;
   
   //////Debug cam angels ////////////////////////
     // cameras angle about the y axis how you would normally rotate a camera left and right
@@ -57,9 +56,9 @@ extern "C" void idleanimation(){
   string newtitle = camAt.str() + cameye.str() ;
   glutSetWindowTitle(newtitle.c_str());
   
-  scene.update(timefactor);
+  scene.update(time);
 
-  lasttime=time;
+
   glutPostRedisplay();
 }
 extern "C" void special(int key, int x, int y){
@@ -81,9 +80,7 @@ extern "C" void keyboard(unsigned char key, int x, int y){
 
   case 'B':scene.display_status(true); break;
 
-  case ' ':  
-    scene.make_move();
-    break;
+  case ' ':  scene.make_move();  break;
   }
 
   glutPostRedisplay();

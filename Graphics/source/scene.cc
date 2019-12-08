@@ -6,6 +6,11 @@
 #include "scene.h"
 #include "shader.h"
 #include "piece.h"
+#include <unistd.h>
+
+#include <stdio.h>
+#include <pthread.h>
+
 
 void Scene::init(){
   // Create a vertex array object
@@ -113,12 +118,19 @@ void Scene::draw(){
 
   board->draw();
 }
-void Scene::update(int timefactor){
+void Scene::update(int time){
+  int timefactor = time - lasttime;
+  timesincelastmove += timefactor;
+
   for (auto p : pieces){
     //p->update(.15,.04);
-    p->updatewithtime(timefactor*2);
+    p->updatewithtime(timefactor);
   }
+  if (timesincelastmove > rand() % 2000 + 2500 ){computermoveifneeded();}
+
+  lasttime = time;
 }
+
 
 void Scene::display_status(bool printTerminalBoard){
   if (printTerminalBoard){
@@ -129,7 +141,7 @@ void Scene::display_status(bool printTerminalBoard){
 
 void Scene::restart(){
   othello::restart();
-  initailpeiceplacement();
+  animateToinitialplacement();
   animateupdatetonewboard();
   legalmoves = currentlegalmoves();
 }
@@ -156,6 +168,32 @@ void Scene::initailpeiceplacement(){
       if(i%8 == 0){ z=0; y -= 1;}  
       pieces[i]->set_position(x,y,z);
       pieces[i]->settowhite();
+    }
+  }
+}
+void Scene::animateToinitialplacement(){
+  static int x,y,z =0;
+  pieces[0]->translatetopostion("e4",true);pieces[0]->settoblack();
+  pieces[1]->translatetopostion("d4",true);pieces[1]->settowhite();
+  pieces[2]->translatetopostion("d5",true);pieces[2]->settoblack();
+  pieces[3]->translatetopostion("e5",true);pieces[3]->settowhite();
+
+  curblackpieceindex = 4; 
+  y = 5;
+  for (long unsigned int i=4; i<pieces.size(); i++){
+    if(i < ((pieces.size()-4)/2 + 4)){
+      z += board->spacesize();
+      x = board->spacesize()*-1;
+      if(i%8 == 0){ z=0; y -= 1;}  
+      pieces[i]->set_goal_position(x,y,z);
+      pieces[i]->rotatetoblack();
+    }else{
+      if(i == 34){y = 5; currentpieceindex = curwhitepieceindex = i;}
+      z += board->spacesize();
+      x = board->spacesize()*8;
+      if(i%8 == 0){ z=0; y -= 1;}  
+      pieces[i]->set_goal_position(x,y,z);
+      pieces[i]->rotatetowhite();
     }
   }
 }
@@ -219,11 +257,21 @@ void Scene::animateupdatetonewboard(){
 }
 
 void Scene::make_move(){
-  othello::make_move(legalmoves[currentmoveindex]);
-  currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
+  if(is_game_over()){} 
+			if (last_mover() == COMPUTER){
+				othello::make_move(legalmoves[currentmoveindex]);
+        currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
+      }
+			else{
+        string nextmove = othello::get_computer_move();
+				othello::make_move(nextmove); 
+        currentpiece()->translatetopostion(nextmove,true);
+      }
+
   legalmoves = currentlegalmoves();
   setupnextpiece();
   animateupdatetonewboard();
+  timesincelastmove = 0;
 }
 
 void Scene::setupnextpiece(){
@@ -234,7 +282,6 @@ void Scene::setupnextpiece(){
     currentpieceindex = curwhitepieceindex;
     curblackpieceindex++;
   }
-  translatepiecetonextlegalpostition();
 }
 
 Piece* Scene::currentpiece(){
@@ -266,8 +313,14 @@ void Scene::translatepiecetopreviouslegalpostion(){
   if(currentmoveindex > legalmoves.size() ){
     currentmoveindex %= legalmoves.size();
   }else if(currentmoveindex < 0 ){ 
-    currentmoveindex = 0;
+    currentmoveindex *= -1;
+    currentmoveindex %= legalmoves.size();
   } 
   string nextmove = legalmoves[currentmoveindex];
   currentpiece()->translatetopostion(nextmove,false);
+}
+void Scene::computermoveifneeded(){
+  if(last_mover() == HUMAN){
+    Scene::make_move();
+  }
 }

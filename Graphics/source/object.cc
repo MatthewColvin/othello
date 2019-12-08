@@ -16,11 +16,7 @@ void object::draw(){
 
 //Animation Code
 float mysqrt(float x){
-  float squareroot = sqrt(abs(x));
-  if(x<0){
-    return(-squareroot);
-  }
-  return(squareroot);
+  return(sqrt(abs(x)));
 }
 // Non-Class helpers ///////////////////////////////
     bool isIdentity(mat4 &R){
@@ -59,12 +55,12 @@ void object::Translate(float xamount,float yamount, float zamount){
   }
   // public ///////////////////////
     void object::set_goal_position(vec3 newPosition){
-      if(isTraveling()){
-        std::cerr << "Watch out seting new location while moving may cause weird effect" << std::endl;
-      } 
       Goalx = newPosition.x;
       Goaly = newPosition.y;
       Goalz = newPosition.z;
+    }
+    void object::set_goal_position(float x,float y, float z){
+      set_goal_position(vec3(x,y,z));
     }
   // private //////////////////////
     bool object::isTraveling(){
@@ -360,8 +356,8 @@ void object::Scale(float xamount, float yamount, float zamount){
 // TODO update to support speed.
 void object::update(float translationamountpercall,float rotationamountpercall){
     if(isTraveling()){
-        float percenttotravel = (translationamountpercall/distanceToGoal()) * (translationamountpercall/distanceToGoal());
-        if (percenttotravel >= 1.0){
+        float percenttotravel = translationamountpercall/distanceToGoal();
+        if (percenttotravel >= 100){
             set_position(get_goal_position());
         }else{
             vec3 nextpos(
@@ -385,7 +381,7 @@ void object::update(float translationamountpercall,float rotationamountpercall){
     }
 }
 void object::updatewithtime(float timeseed){
-    float translationtimescale = .01;
+    float translationtimescale = .003;
     float rotationtimescale = 0.001;
     update(timeseed*translationtimescale,timeseed*rotationtimescale);
 }

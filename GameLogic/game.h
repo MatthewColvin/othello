@@ -75,7 +75,8 @@ namespace main_savitch_14
 		virtual bool is_game_over() const = 0;
 		// Return true if the given move is legal for the next player:
 		virtual bool is_legal(const std::string& move) const = 0;
-
+		// Return the next move the computer would take as a string
+		std::string get_computer_move();
 	private:
 		// MEMBER VARIABLES
 		int move_number;                     // Number of moves made so far

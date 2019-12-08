@@ -30,6 +30,7 @@ class object{
         void Translate(float xamount,float yamount, float zamount);
         // Translation /////////////////////
             void set_goal_position(vec3 newPosition);
+            void set_goal_position(float x,float y, float z);
             
             inline vec3 get_position(){return vec3(x,y,z);}     
             inline void set_position(float x, float y, float z){ set_goal_position(vec3(x,y,z)); set_position(vec3(x,y,z));}
