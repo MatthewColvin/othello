@@ -72,7 +72,7 @@ class Scene : private main_savitch_14::othello{
 			void setupnextpiece();
 			void computermoveifneeded();
 			float timesincelastmove;
-
+			bool dohavemove();
 
 			std::queue<gamemessage> messagequeue;	
 			

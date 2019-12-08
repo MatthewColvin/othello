@@ -22,8 +22,9 @@ class Piece : public object{
 		void settoblack();
 
         void translatetopostion(string othelloStrmove,bool placed);  
-        void setpostiton(string othelloStrmove,bool placed);
-        
+        void setposition(string othelloStrmove,bool placed);
+        void reset();
+
         vec2 boardposition(){return posOnboard;}
 
     private:

@@ -10,8 +10,7 @@
 #include <queue>
 
 #include <stdio.h>
-#include <strstream>
-#include <iomanip>
+
 
 void Scene::init(){
   // Create a vertex array object
@@ -151,6 +150,9 @@ void Scene::display_status(bool printTerminalBoard){
 
 void Scene::restart(){
   othello::restart();
+  for(auto piece : pieces){
+    piece->reset(); // unlinks coordinats from grapical piece
+  }
   display_message("Welcome to Othello",7);
   display_message("Use WASD to move around things around",5);
   display_message("Your move use left and right arrows", 2);
@@ -161,10 +163,10 @@ void Scene::restart(){
 
 void Scene::initailpeiceplacement(){
   static int x,y,z =0;
-  pieces[0]->setpostiton("e4",true);pieces[0]->settoblack();
-  pieces[1]->setpostiton("d4",true);pieces[1]->settowhite();
-  pieces[2]->setpostiton("d5",true);pieces[2]->settoblack();
-  pieces[3]->setpostiton("e5",true);pieces[3]->settowhite();
+  pieces[0]->setposition("e4",true);pieces[0]->settoblack();
+  pieces[1]->setposition("d4",true);pieces[1]->settowhite();
+  pieces[2]->setposition("d5",true);pieces[2]->settoblack();
+  pieces[3]->setposition("e5",true);pieces[3]->settowhite();
 
   curblackpieceindex = 4; 
   y = 5;
@@ -268,6 +270,10 @@ void Scene::animateupdatetonewboard(){
     }
   }
 }
+bool Scene::dohavemove(){
+  if(legalmoves[0] == "****"){return false;} 
+  return true;
+}
 
 void Scene::make_move(){
   if(is_game_over()){
@@ -279,19 +285,29 @@ void Scene::make_move(){
   }else{
     if (last_mover() == COMPUTER){
       othello::make_move(legalmoves[currentmoveindex]);
-      currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
-      display_message("Black's move",2);
+      if(dohavemove()){
+        currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
+        legalmoves = currentlegalmoves();
+        setupnextpiece();
+        animateupdatetonewboard();
+        display_message("Black's move",2);
+      }else{
+        display_message("Black has no move" , 10);
+      }
     }
     else{
       string nextmove = othello::get_computer_move();
       othello::make_move(nextmove); 
-      currentpiece()->translatetopostion(nextmove,true);
-      display_message("Your move use left and right arrows",2);
-    }
-
-    legalmoves = currentlegalmoves();
-    setupnextpiece();
-    animateupdatetonewboard();
+      if(dohavemove()){
+        currentpiece()->translatetopostion(nextmove,true);
+          legalmoves = currentlegalmoves();
+          setupnextpiece();
+          animateupdatetonewboard();
+          display_message("Your move use left and right arrows",2);
+      }else{
+        display_message("You have no move" , 5);
+      }
+    }              
     timesincelastmove = 0;
   }
 }
@@ -321,25 +337,38 @@ std::vector<string> Scene::currentlegalmoves(){
 }
 
 void Scene::translatepiecetonextlegalpostition(){
-  currentmoveindex++;
-  if(currentmoveindex >= legalmoves.size() ){
-    currentmoveindex %= legalmoves.size();
-  }else if(currentmoveindex < 0 ){ 
+  if(!dohavemove()){// speical key that means pass
+    display_message("Sorry You have no legal moves", 2);
     currentmoveindex = 0;
+    make_move();
+  }else{
+    currentmoveindex++;
+    if(currentmoveindex >= legalmoves.size() ){
+      currentmoveindex %= legalmoves.size();
+    }else if(currentmoveindex < 0 ){ 
+      currentmoveindex *= -1;
+      currentmoveindex %= legalmoves.size();
+    }
+    string nextmove = legalmoves[currentmoveindex];
+    currentpiece()->translatetopostion(nextmove,false);
   }
-  string nextmove = legalmoves[currentmoveindex];
-  currentpiece()->translatetopostion(nextmove,false);
 }
 void Scene::translatepiecetopreviouslegalpostion(){
-  currentmoveindex--;
-  if(currentmoveindex > legalmoves.size() ){
-    currentmoveindex %= legalmoves.size();
-  }else if(currentmoveindex < 0 ){ 
-    currentmoveindex *= -1;
-    currentmoveindex %= legalmoves.size();
-  } 
-  string nextmove = legalmoves[currentmoveindex];
-  currentpiece()->translatetopostion(nextmove,false);
+  if(!dohavemove()){ // speical key that means pass
+    display_message("Sorry You have no legal moves", 2);
+    currentmoveindex = 0; 
+    make_move();
+  }else{
+    currentmoveindex--;
+    if(currentmoveindex > legalmoves.size() ){
+      currentmoveindex %= legalmoves.size();
+    }else if(currentmoveindex < 0 ){ 
+      currentmoveindex *= -1;
+      currentmoveindex %= legalmoves.size();
+    } 
+    string nextmove = legalmoves[currentmoveindex];
+    currentpiece()->translatetopostion(nextmove,false);
+  }
 }
 void Scene::computermoveifneeded(){
   if(last_mover() == HUMAN){
@@ -352,5 +381,6 @@ void Scene::display_message(std::string newtitle ,float timetodisplay ) {
 }
 void Scene::display_message(std::string newtitle) {
   while(!messagequeue.empty()) messagequeue.pop(); // empty message queue
-  glutSetWindowTitle(newtitle.c_str());
+  gamemessage onlymessage(newtitle,1);
+  messagequeue.push(onlymessage);
 }
