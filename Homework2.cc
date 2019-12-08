@@ -80,6 +80,8 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   case 's': scene.camera.moveback(stepsize);    break;
   case 'a': scene.camera.moveright(stepsize); break;
   case 'd': scene.camera.moveleft(stepsize);  break;
+  
+  case 'R': scene.restart(); break; // restart the game
 
   case 'B':scene.display_status(true); break;
 

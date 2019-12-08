@@ -18,6 +18,12 @@ using std::string;
 // 	vector<norm4> AllNormals;
 // };
 
+struct gamemessage{
+	float displaytimeleft = 5;
+	std::string message;
+	gamemessage(std::string message, float timetodisplay){displaytimeleft = timetodisplay;   gamemessage::message = message;}
+};
+
 class Scene : private main_savitch_14::othello{
 	public:
 		void init();
@@ -26,8 +32,8 @@ class Scene : private main_savitch_14::othello{
 		
 		
 		// Old othello class functions
-			void display_message(const std::string& message) ;
-			void display_message(const std::string& newtitle,bool bypassmessagequeue) ;
+			void display_message(std::string message ,float timetodisplay) ;
+			void display_message(std::string newtitle) ;
 			void display_status(bool printTerminalBoard);
 			void make_move();
 			void restart();
@@ -65,11 +71,9 @@ class Scene : private main_savitch_14::othello{
 			std::vector<string> legalmoves;
 			void setupnextpiece();
 			void computermoveifneeded();
-			int timesincelastmove;
+			float timesincelastmove;
 
 
-			std::queue<string> messagequeue;
-			int timebetweenmessages = 5000;		
-			int timesincelastmessage = 0;	
+			std::queue<gamemessage> messagequeue;	
 			
 };

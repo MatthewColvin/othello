@@ -10,8 +10,8 @@
 #include <queue>
 
 #include <stdio.h>
-#include <pthread.h>
-
+#include <strstream>
+#include <iomanip>
 
 void Scene::init(){
   // Create a vertex array object
@@ -120,23 +120,24 @@ void Scene::draw(){
   board->draw();
 }
 void Scene::update(int time){
-  int timefactor = time - lasttime;  
+  float timefactor = time - lasttime;  
+
   for (auto p : pieces){
     //p->update(.15,.04);
-    p->updatewithtime(timefactor);
+    p->updatewithtime(timefactor*2);
   }
 
-  timesincelastmove += timefactor;
-  if (timesincelastmove > rand() % 2000 + 2500 ){computermoveifneeded();}
+  timesincelastmove += timefactor/1000;
+  if (timesincelastmove > rand() % 2 + 2.5 ){computermoveifneeded();}
   
-  timesincelastmessage += timefactor;
-  if (timebetweenmessages > timesincelastmessage){  
-    if(!messagequeue.empty()){
-      glutSetWindowTitle(messagequeue.front().c_str());
-      timesincelastmessage = 0;
-    }
-  }
 
+  
+  messagequeue.front().displaytimeleft -= timefactor/1000;  
+  glutSetWindowTitle(messagequeue.front().message.c_str());
+  if(messagequeue.size() > 1 && messagequeue.front().displaytimeleft < 0){
+    messagequeue.pop();
+  }
+  
   lasttime = time;
 }
 
@@ -150,7 +151,9 @@ void Scene::display_status(bool printTerminalBoard){
 
 void Scene::restart(){
   othello::restart();
-  display_message("Welcome to Othello");
+  display_message("Welcome to Othello",7);
+  display_message("Use WASD to move around things around",5);
+  display_message("Your move use left and right arrows", 2);
   animateToinitialplacement();
   animateupdatetonewboard();
   legalmoves = currentlegalmoves();
@@ -183,10 +186,10 @@ void Scene::initailpeiceplacement(){
 }
 void Scene::animateToinitialplacement(){
   static int x,y,z =0;
-  pieces[0]->translatetopostion("e4",true);pieces[0]->settoblack();
-  pieces[1]->translatetopostion("d4",true);pieces[1]->settowhite();
-  pieces[2]->translatetopostion("d5",true);pieces[2]->settoblack();
-  pieces[3]->translatetopostion("e5",true);pieces[3]->settowhite();
+  pieces[0]->translatetopostion("e4",true);pieces[0]->rotatetoblack();
+  pieces[1]->translatetopostion("d4",true);pieces[1]->rotatetowhite();
+  pieces[2]->translatetopostion("d5",true);pieces[2]->rotatetoblack();
+  pieces[3]->translatetopostion("e5",true);pieces[3]->rotatetowhite();
 
   curblackpieceindex = 4; 
   y = 5;
@@ -267,21 +270,30 @@ void Scene::animateupdatetonewboard(){
 }
 
 void Scene::make_move(){
-  if(is_game_over()){} 
-			if (last_mover() == COMPUTER){
-				othello::make_move(legalmoves[currentmoveindex]);
-        currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
-      }
-			else{
-        string nextmove = othello::get_computer_move();
-				othello::make_move(nextmove); 
-        currentpiece()->translatetopostion(nextmove,true);
-      }
+  if(is_game_over()){
+    switch(winning()){
+      case COMPUTER: display_message("Black wins Press R to replay"); break;
+      case HUMAN: display_message("You win Press R to replay");    break;
+      case NEUTRAL: display_message("'Twas a draw better press R");  break;
+    }
+  }else{
+    if (last_mover() == COMPUTER){
+      othello::make_move(legalmoves[currentmoveindex]);
+      currentpiece()->translatetopostion(legalmoves[currentmoveindex],true);
+      display_message("Black's move",2);
+    }
+    else{
+      string nextmove = othello::get_computer_move();
+      othello::make_move(nextmove); 
+      currentpiece()->translatetopostion(nextmove,true);
+      display_message("Your move use left and right arrows",2);
+    }
 
-  legalmoves = currentlegalmoves();
-  setupnextpiece();
-  animateupdatetonewboard();
-  timesincelastmove = 0;
+    legalmoves = currentlegalmoves();
+    setupnextpiece();
+    animateupdatetonewboard();
+    timesincelastmove = 0;
+  }
 }
 
 void Scene::setupnextpiece(){
@@ -334,13 +346,11 @@ void Scene::computermoveifneeded(){
     Scene::make_move();
   }
 }
-void Scene::display_message(const std::string& newtitle) {
-  messagequeue.push(newtitle);
+void Scene::display_message(std::string newtitle ,float timetodisplay ) {
+  gamemessage nextmessage(newtitle,timetodisplay);
+  messagequeue.push(nextmessage);
 }
-void Scene::display_message(const std::string& newtitle,bool bypassmessagequeue) {
-  if(bypassmessagequeue){
-    glutSetWindowTitle(newtitle.c_str());
-  }else{
-    messagequeue.push(newtitle);
-  }
+void Scene::display_message(std::string newtitle) {
+  while(!messagequeue.empty()) messagequeue.pop(); // empty message queue
+  glutSetWindowTitle(newtitle.c_str());
 }
