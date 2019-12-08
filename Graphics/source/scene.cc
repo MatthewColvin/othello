@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "piece.h"
 #include <unistd.h>
+#include <queue>
 
 #include <stdio.h>
 #include <pthread.h>
@@ -119,14 +120,22 @@ void Scene::draw(){
   board->draw();
 }
 void Scene::update(int time){
-  int timefactor = time - lasttime;
-  timesincelastmove += timefactor;
-
+  int timefactor = time - lasttime;  
   for (auto p : pieces){
     //p->update(.15,.04);
     p->updatewithtime(timefactor);
   }
+
+  timesincelastmove += timefactor;
   if (timesincelastmove > rand() % 2000 + 2500 ){computermoveifneeded();}
+  
+  timesincelastmessage += timefactor;
+  if (timebetweenmessages > timesincelastmessage){  
+    if(!messagequeue.empty()){
+      glutSetWindowTitle(messagequeue.front().c_str());
+      timesincelastmessage = 0;
+    }
+  }
 
   lasttime = time;
 }
@@ -141,6 +150,7 @@ void Scene::display_status(bool printTerminalBoard){
 
 void Scene::restart(){
   othello::restart();
+  display_message("Welcome to Othello");
   animateToinitialplacement();
   animateupdatetonewboard();
   legalmoves = currentlegalmoves();
@@ -322,5 +332,15 @@ void Scene::translatepiecetopreviouslegalpostion(){
 void Scene::computermoveifneeded(){
   if(last_mover() == HUMAN){
     Scene::make_move();
+  }
+}
+void Scene::display_message(const std::string& newtitle) {
+  messagequeue.push(newtitle);
+}
+void Scene::display_message(const std::string& newtitle,bool bypassmessagequeue) {
+  if(bypassmessagequeue){
+    glutSetWindowTitle(newtitle.c_str());
+  }else{
+    messagequeue.push(newtitle);
   }
 }

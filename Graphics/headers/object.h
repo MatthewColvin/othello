@@ -34,9 +34,9 @@ class object{
             
             inline vec3 get_position(){return vec3(x,y,z);}     
             inline void set_position(float x, float y, float z){ set_goal_position(vec3(x,y,z)); set_position(vec3(x,y,z));}
-            inline float translationSpeed(){return translationspeed / 10000;}
-            inline void speedUp(int amount){translationspeed += amount;}
-            inline void slowDown(int amount){translationspeed -= amount;}
+            inline float translationSpeed(){return translationspeed * 100;}
+            inline void speedUp(int amount){translationspeed += amount/100;}
+            inline void slowDown(int amount){translationspeed -= amount/100;}
         ////////////////////////////////////
 
         void Rotate(float xdegrees,float ydegrees,float zdegrees);
@@ -45,9 +45,9 @@ class object{
             void set_goal_orientation(double roll, double pitch, double yaw);
             void set_orientation(EulerAngles neworientation);
 
-            inline float rotationSpeed(){return rotationspeed / 10000;}
-            inline void speedUpRotation(int amount){rotationspeed += amount;}
-            inline void slowDownRotation(int amount){rotationspeed -= amount;}
+            inline float rotationSpeed(){return rotationspeed * 100;}
+            inline void speedUpRotation(int amount){rotationspeed += amount/100;}
+            inline void slowDownRotation(int amount){rotationspeed -= amount/100;}
             void Tests();
         ////////////////////////////////////
 
@@ -61,7 +61,7 @@ class object{
     private:
         
         // Translation 
-            float translationspeed = 10;
+            float translationspeed = 0.001;
             float x=0; float y=0; float z=0;
             float Goalx=0; float Goaly=0; float Goalz=0;
             mat4 translationmatrix ;
@@ -78,7 +78,7 @@ class object{
             inline float YdistToGoal(){return Goaly - y;}
             inline float ZdistToGoal(){return Goalz - z;}        
         // Rotation
-            float rotationspeed = 10;
+            float rotationspeed = 0.001;
             mat4 rotationmatrix;
             
             EulerAngles currentorientation;

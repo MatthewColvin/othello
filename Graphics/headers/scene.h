@@ -9,9 +9,6 @@
 #include <queue>
 #include <unistd.h>
 
-#include <stdio.h>
-#include <pthread.h>
-
 #include "othello.h"
 
 using std::string;
@@ -29,6 +26,8 @@ class Scene : private main_savitch_14::othello{
 		
 		
 		// Old othello class functions
+			void display_message(const std::string& message) ;
+			void display_message(const std::string& newtitle,bool bypassmessagequeue) ;
 			void display_status(bool printTerminalBoard);
 			void make_move();
 			void restart();
@@ -67,6 +66,10 @@ class Scene : private main_savitch_14::othello{
 			void setupnextpiece();
 			void computermoveifneeded();
 			int timesincelastmove;
-			
+
+
+			std::queue<string> messagequeue;
+			int timebetweenmessages = 5000;		
+			int timesincelastmessage = 0;	
 			
 };

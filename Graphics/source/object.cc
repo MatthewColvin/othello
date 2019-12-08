@@ -381,9 +381,7 @@ void object::update(float translationamountpercall,float rotationamountpercall){
     }
 }
 void object::updatewithtime(float timeseed){
-    float translationtimescale = .003;
-    float rotationtimescale = 0.001;
-    update(timeseed*translationtimescale,timeseed*rotationtimescale);
+    update(timeseed*translationspeed,timeseed*rotationspeed);
 }
 
 

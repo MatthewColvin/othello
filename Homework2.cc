@@ -36,6 +36,7 @@ extern "C" void idleanimation(){
     // camera angle about the x axis rotating the camera up and down
     stringstream cameraangleinx;
     cameraangleinx << "CAX: " <<  setprecision(2)  <<  scene.camera.get_cameraXangel();
+    string camanglesdebug = cameraangleinx.str() + cameraangleiny.str();
   ///////////////////////////////////////////////
   
   //////Eye At debug/////////////////////////////
@@ -44,17 +45,19 @@ extern "C" void idleanimation(){
     stringstream camAt,cameye;
     camAt << "At=" <<  setprecision(2) << "x:" << at.x << "y:" << at.y << "z:" << at.z ;
     cameye << "eye=" <<  setprecision(2) <<"x:" << eye.x << "y:" << eye.y << "z:" << eye.z ;
+    string eyeatdebug= camAt.str() + cameye.str();
   ///////////////////////////////////////////////
   
   ///// Peice locations /////////////////////////
     vec4 loc = scene.pieces[0]->get_position();
     stringstream peiceloc;
     peiceloc << "x:" << loc.x << "   y:" << loc.y << "   z:" << loc.z ;
+    string piece0locdebug = peiceloc.str();
   ///////////////////////////////////////////////
 
-
-  string newtitle = camAt.str() + cameye.str() ;
-  glutSetWindowTitle(newtitle.c_str());
+  // scene.display_message(eyeatdebug,true);
+  // scene.display_message(camanglesdebug,true);
+  // scene.display_message(piece0locdebug,true);
   
   scene.update(time);
 
