@@ -131,7 +131,7 @@ void Scene::draw(){
   
 }
 void Scene::update(int time){
-  float timefactor = time - lasttime;  
+  float timefactor = time - lastupdatetime;  
 
   light->updatewithtime(timefactor*2);
 
@@ -149,7 +149,7 @@ void Scene::update(int time){
     messagequeue.pop();
   }
   
-  lasttime = time;
+  lastupdatetime = time;
 }
 ////// Pararmetes for editing in menu //////////
   void Scene::changelightcolor(color4 newcolor){
@@ -336,10 +336,30 @@ Piece* Scene::currentpiece(){
   return pieces[currentpieceindex];
 }
 void Scene::changepeicestranslationspeed(float amount){
-
+  for(auto piece:pieces){
+    if(amount > 0){
+      if(!(piece->translationSpeed() + amount > maxpiecetranslationspeed)){
+        piece->speedUp(amount);
+      }
+    }else{
+      if(!(piece->translationSpeed() - amount < minpiecetranslationspeed)){
+        piece ->slowDown(-amount);
+      } 
+    }
+  }
 }
 void Scene::changpiecesrotationspeed(float amount){
-
+  for(auto piece:pieces){
+    if(amount > 0){
+      if(!(piece->rotationSpeed() + amount > maxpiecerotationspeed)){
+        piece->speedUpRotation(amount);
+      }
+    }else{
+      if(!(piece->rotationSpeed() - amount < minpiecerotationspeed)){
+        piece ->slowDownRotation(-amount);
+      } 
+    }
+  }
 }
 
 

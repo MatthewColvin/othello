@@ -40,8 +40,8 @@ extern "C" void updatemousexy(int x,int y);
 void menu(int num){
   switch (num){
     case(0): exit(0); break;
-    case(1):  break;// enable disco othello 
-    case(2):  break;// disable disco othello
+    case(1): scene.restart(); break;
+    case(2): scene.display_status(true); break;
   }
 }
 void objectcontrol(int num){
@@ -49,6 +49,8 @@ void objectcontrol(int num){
     case (1): WASDmoving = Light;        break;
     case (2): WASDmoving = CurrentPiece; break;
     case (3): WASDmoving = camera;       break;
+    case (4): plusminuscontrols = PieceTranslationSpeed; break;
+    case (5): plusminuscontrols = PieceRotationSpeed; break;
   }
   glutPostRedisplay();
 } 
@@ -72,6 +74,8 @@ void createMenu(void){
     glutAddMenuEntry("Light", 1);
     glutAddMenuEntry("Current Piece",2);
     glutAddMenuEntry("Camera",3);
+    glutAddMenuEntry("+- control piece translation speed",4);
+    glutAddMenuEntry("+- control piece rotation speed", 5);
   
   int lightcontolsubmenuid = glutCreateMenu(lightcontrol);
     glutAddMenuEntry("White",1);
@@ -85,12 +89,12 @@ void createMenu(void){
     glutAddMenuEntry("+- controls Diffuse Intensity",101);
     //add light speed
   int gameoptions = glutCreateMenu(menu);
-    glutAddMenuEntry("Disable",1);
-    glutAddMenuEntry("Enable",2);
+    glutAddMenuEntry("Restart Game",1);
+    glutAddMenuEntry("Display terminal Board",2);
   glutCreateMenu(menu);
     glutAddSubMenu("Object to control", objectcontrolsubmenuid);
     glutAddSubMenu("Light Control",lightcontolsubmenuid);
-    glutAddMenuEntry("Disco Othello", gameoptions);
+    glutAddMenuEntry("Game options", gameoptions);
     glutAddMenuEntry("Quit", 0);     
   
   glutAttachMenu(GLUT_RIGHT_BUTTON);
@@ -176,12 +180,20 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   }
   switch (plusminuscontrols){
     case(DiffuseLight) :switch(key){
-      case('+'): scene.changeambiantintensity(0.05); break;
+      case('+'): scene.changeambiantintensity(0.05);  break;
       case('-'): scene.changeambiantintensity(-0.05); break;
     }break;
     case(SpecularLight):switch(key){
-      case('+'): scene.changespecularintenstiy(0.05); break;
+      case('+'): scene.changespecularintenstiy(0.05);  break;
       case('-'): scene.changespecularintenstiy(-0.05); break;
+    }break;
+    case(PieceTranslationSpeed):switch(key){
+      case('+'): scene.changepeicestranslationspeed(10);  break;
+      case('-'): scene.changepeicestranslationspeed(-10); break;
+    }break;
+    case(PieceRotationSpeed):switch(key){
+      case('+'): scene.changpiecesrotationspeed(10);  break;
+      case('-'): scene.changpiecesrotationspeed(-10); break;
     }break;
   }
 
@@ -189,14 +201,6 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   //033 escape key
   case 033: exit(EXIT_SUCCESS);break;
   
-  // standard walking movement
-  
- 
-  
-  case 'R': scene.restart(); break; // restart the game
-
-  case 'B':scene.display_status(true); break;
-
   case ' ':  scene.make_move();  break;
   }
 

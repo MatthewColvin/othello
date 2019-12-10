@@ -36,9 +36,9 @@ class object{
             
             inline vec3 get_position(){return vec3(x,y,z);}     
             inline void set_position(float x, float y, float z){ set_goal_position(vec3(x,y,z)); set_position(vec3(x,y,z));}
-            inline float translationSpeed(){return translationspeed * 100;}
-            inline void speedUp(int amount){translationspeed += amount/100;}
-            inline void slowDown(int amount){translationspeed -= amount/100;}
+            inline float translationSpeed(){return translationspeed * 1000;}
+            inline void speedUp(int amount){translationspeed += amount/1000;}
+            inline void slowDown(int amount){translationspeed -= amount/1000;}
         ////////////////////////////////////
 
         void Rotate(float xdegrees,float ydegrees,float zdegrees);
@@ -47,9 +47,9 @@ class object{
             void set_goal_orientation(double roll, double pitch, double yaw);
             void set_orientation(EulerAngles neworientation);
 
-            inline float rotationSpeed(){return rotationspeed * 100;}
-            inline void speedUpRotation(int amount){rotationspeed += amount/100;}
-            inline void slowDownRotation(int amount){rotationspeed -= amount/100;}
+            inline float rotationSpeed(){return rotationspeed * 1000;}
+            inline void speedUpRotation(int amount){rotationspeed += amount/1000;}
+            inline void slowDownRotation(int amount){rotationspeed -= amount/1000;}
             void Tests();
         ////////////////////////////////////
 

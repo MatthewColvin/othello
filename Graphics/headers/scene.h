@@ -55,39 +55,46 @@ class Scene : private main_savitch_14::othello{
 		//	
 
 		Piece* currentpiece();
+		// Piece movement 
+			void translatepiecetonextlegalpostition();
+			void translatepiecetopreviouslegalpostion();
 
-		void translatepiecetonextlegalpostition();
-		void translatepiecetopreviouslegalpostion();
-
-		void changepeicestranslationspeed(float amount);
-		void changpiecesrotationspeed(float amount);
-  
+			void changepeicestranslationspeed(float amount);
+			void changpiecesrotationspeed(float amount);
+		//
 	private:
 		vector<point4> AllVertices;
 		vector<color4> AllColors;
 		vector<norm4> AllNormals;
-		unsigned int lasttime=0; // gets updated everytime update is called
+
+		unsigned int lastupdatetime=0; // gets updated everytime update is called
+		
 		// Light model 
 			color4 lightcolor = color4(1,1,1,1);
 			float ambiantintenstiy = 0.5;
 			float specularintensity = 0.5;
 		//
-		
-		//piece movement 
+		// Piece movement 
 			void updatetonewboard();
 			void animateupdatetonewboard();
-			long unsigned int curwhitepieceindex;
-			long unsigned int curblackpieceindex;
-			long unsigned int currentpieceindex;
-			
-			long unsigned int currentmoveindex;
-			std::vector<string> currentlegalmoves();
-			std::vector<string> legalmoves;
 			void setupnextpiece();
 			void computermoveifneeded();
 			float timesincelastmove;
-			bool dohavemove();
+			float maxpiecetranslationspeed = 200;
+			float minpiecetranslationspeed = 1;
+			float maxpiecerotationspeed = 200;
+			float minpiecerotationspeed = 1;
+		//	
 
-			std::queue<gamemessage> messagequeue;	
+		long unsigned int curwhitepieceindex;
+		long unsigned int curblackpieceindex;
+		long unsigned int currentpieceindex;
+		
+		long unsigned int currentmoveindex;
+		std::vector<string> currentlegalmoves();
+		std::vector<string> legalmoves;
+		bool dohavemove();
+
+		std::queue<gamemessage> messagequeue;	
 			
 };
