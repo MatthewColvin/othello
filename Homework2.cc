@@ -7,14 +7,25 @@ using std::string;
 using std::stringstream;
 using std::setprecision;
 
+
 Scene scene;
-float stepsize = 0.1; 
 float camrotationamount = 0.01;
 float glutaspectratio = 0;
 // usedd for mouse look around
 int oldx,oldy,deltax,deltay;
 float lookaroundsensetivity=0.0008;
 
+// In world movement of objects
+  float ligthmovemntamnt = 1;
+  float currentpiecemovemntamnt = 1;
+  float stepsize = 0.1; 
+
+  enum {Light, CurrentPiece, Camera};
+  int WASDmoving = Camera;
+// Controlling parameters in scene with + and - keys
+  enum{SpecularLight, DiffuseLight};
+  int plusminuscontrols = DiffuseLight;
+//
 
 
 extern "C" void display();
@@ -24,6 +35,66 @@ extern "C" void keyboard(unsigned char key, int x, int y);
 extern "C" void reshape(int width, int height);
 extern "C" void lookaround(int x, int y);
 extern "C" void updatemousexy(int x,int y);
+
+void menu(int num){
+  switch (num){
+    case(0): exit(0); break;
+    case(1):  break;// enable disco othello 
+    case(2):  break;// disable disco othello
+  }
+}
+void objectcontrol(int num){
+  switch (num) {
+    case (1): WASDmoving = Light;        break;
+    case (2): WASDmoving = CurrentPiece; break;
+    case (3): WASDmoving = Camera;       break;
+  }
+  glutPostRedisplay();
+} 
+void lightcontrol(int num){
+  switch (num) {
+    case (1): scene.changelightcolor(color4(1,1,1,1)); break;
+    case (2): scene.changelightcolor(color4(1,0,0,1)); break;
+    case (3): scene.changelightcolor(color4(0,1,0,1)); break;
+    case (4): scene.changelightcolor(color4(0,0,1,1)); break;
+    case (5): scene.changelightcolor(color4(0,1,1,1)); break;
+    case (6): scene.changelightcolor(color4(1,1,0,1)); break;
+    case (7): scene.changelightcolor(color4(250/255.0,220/255.0,0,1)); break;
+    case (100) : plusminuscontrols = SpecularLight; break;
+    case (101) : plusminuscontrols = DiffuseLight;  break;
+  }
+
+  glutPostRedisplay();
+} 
+void createMenu(void){  
+  int objectcontrolsubmenuid = glutCreateMenu(objectcontrol);
+    glutAddMenuEntry("Light", 1);
+    glutAddMenuEntry("Current Piece",2);
+    glutAddMenuEntry("Camera",3);
+  
+  int lightcontolsubmenuid = glutCreateMenu(lightcontrol);
+    glutAddMenuEntry("White",1);
+    glutAddMenuEntry("Red",2);
+    glutAddMenuEntry("Green",3);
+    glutAddMenuEntry("Blue",4);
+    glutAddMenuEntry("Cyan",5);
+    glutAddMenuEntry("Yellow",6);
+    glutAddMenuEntry("MellowYellow",7);
+    glutAddMenuEntry("+- controls Specular Intensity",100);
+    glutAddMenuEntry("+- controls Diffuse Intensity",101);
+    //add light speed
+  int gameoptions = glutCreateMenu(menu);
+    glutAddMenuEntry("Disable",1);
+    glutAddMenuEntry("Enable",2);
+  int menu_id = glutCreateMenu(menu);
+    glutAddSubMenu("Object to control", objectcontrolsubmenuid);
+    glutAddSubMenu("Light Control",lightcontolsubmenuid);
+    glutAddMenuEntry("Disco Othello", gameoptions);
+    glutAddMenuEntry("Quit", 0);     
+  
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
+} 
+
 // Simple animation
 GLint lasttime=0;
 extern "C" void idleanimation(){
@@ -61,7 +132,6 @@ extern "C" void idleanimation(){
   
   scene.update(time);
 
-
   glutPostRedisplay();
 }
 extern "C" void special(int key, int x, int y){
@@ -71,15 +141,50 @@ extern "C" void special(int key, int x, int y){
   } 
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
+  switch (WASDmoving){
+    case(Camera): switch(key){
+      case 'w': scene.camera.moveforward(stepsize); break;
+      case 's': scene.camera.moveback(stepsize);    break;
+      case 'a': scene.camera.moveright(stepsize); break;
+      case 'd': scene.camera.moveleft(stepsize);  break;
+      case 'y': scene.camera.movedown(stepsize); break;
+      case 'Y': scene.camera.moveup(stepsize); break;
+    }break;
+    case(Light): switch(key){
+      case 'w': scene.light->Translate(0,0,-ligthmovemntamnt); break;
+      case 's': scene.light->Translate(0,0,ligthmovemntamnt); break;
+      case 'a': scene.light->Translate(ligthmovemntamnt,0,0); break;
+      case 'd': scene.light->Translate(-ligthmovemntamnt,0,0); break;
+      case 'y': scene.light->Translate(0,-ligthmovemntamnt,0); break;
+      case 'Y': scene.light->Translate(0,ligthmovemntamnt,0); break; 
+    }break;
+    case(CurrentPiece): switch(key){
+      case 'w': scene.currentpiece()->Translate(0,0,-currentpiecemovemntamnt); break;
+      case 's': scene.currentpiece()->Translate(0,0,currentpiecemovemntamnt); break;
+      case 'a': scene.currentpiece()->Translate(currentpiecemovemntamnt,0,0); break;
+      case 'd': scene.currentpiece()->Translate(-currentpiecemovemntamnt,0,0); break;
+      case 'y': scene.currentpiece()->Translate(0,-currentpiecemovemntamnt,0); break;
+      case 'Y': scene.currentpiece()->Translate(0,currentpiecemovemntamnt,0); break;
+    }break;
+  }
+  switch (plusminuscontrols){
+    case(DiffuseLight) :switch(key){
+      case('+'): scene.changeambiantintensity(0.05); break;
+      case('-'): scene.changeambiantintensity(-0.05); break;
+    }break;
+    case(SpecularLight):switch(key){
+      case('+'): scene.changespecularintenstiy(0.05); break;
+      case('-'): scene.changespecularintenstiy(-0.05); break;
+    }break;
+  }
+
   switch(key) {
   //033 escape key
   case 033: exit(EXIT_SUCCESS);break;
   
   // standard walking movement
-  case 'w': scene.camera.moveforward(stepsize); break;
-  case 's': scene.camera.moveback(stepsize);    break;
-  case 'a': scene.camera.moveright(stepsize); break;
-  case 'd': scene.camera.moveleft(stepsize);  break;
+  
+ 
   
   case 'R': scene.restart(); break; // restart the game
 
@@ -144,6 +249,7 @@ int main(int argc, char **argv){
   glutReshapeFunc(reshape);
   glutMotionFunc(lookaround);
   glutPassiveMotionFunc(updatemousexy);
+  createMenu();
 
   glutMainLoop();
   return(EXIT_SUCCESS);

@@ -23,6 +23,8 @@ class object{
         object(vector<point4>& GlobalPoints,vector<color4>& GlobalColors,vector<color4>& GlobalNormals);
         void draw(); // Assumes you are drawing triangle soup 
         inline int GetNumVerts(){return NumVertices;}
+        inline int posInVAO(){return StartInVao;}
+
 
         inline void set_mv(mat4 nmv){mv = nmv;}
         inline mat4 get_mv(){return mv * translationmatrix * rotationmatrix ;}

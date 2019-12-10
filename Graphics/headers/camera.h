@@ -35,7 +35,7 @@ class Camera{
         inline float get_cameraXangel(){return cameraangleinx;};
         inline vec4 get_eye(){return eye;};
         inline vec4 get_at(){return at;};
-
+        inline vec4 get_pos(){return vec4(-eye.x,-eye.y,-eye.z,eye.w); }
     private:
         //prespective viewing parameters
             GLfloat fovy=45;

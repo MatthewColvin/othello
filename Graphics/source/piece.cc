@@ -18,7 +18,7 @@ void Piece::draw(){
     // Everything is drawn in relation to the Piece modelview
     
     spheres[0]->set_mv(
-        get_mv() * Angel::Scale(scalefactor));
+        get_mv() * Angel::RotateX(180) * Angel::Scale(scalefactor));
     spheres[0]->draw();
     
     vec3 sphere1scalefactor = vec3(scalefactor.x,scalefactor.y *1.1,scalefactor.z);  

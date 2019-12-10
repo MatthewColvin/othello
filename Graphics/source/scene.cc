@@ -32,7 +32,6 @@ void Scene::init(){
     shader.modelViewMatrix(),AllVertices.size()
   );
 
-
   for(int i = 0; i < 64; i++){
     pieces.push_back(new Piece(
       AllVertices,AllColors,AllNormals,
@@ -40,64 +39,72 @@ void Scene::init(){
     );
   }
 
+  light = new sphere{
+    AllVertices,AllColors,AllNormals,
+    lightcolor,shader.modelViewMatrix(),AllVertices.size()
+  };
+  light->set_position(0,10,0);
+
   restart();
 
-  // Now send the data to the GPU
-    glEnableVertexAttribArray(shader.VertPosition());
-    glVertexAttribPointer(
-      shader.VertPosition(), 
-      4, 
-      GL_FLOAT, 
-      GL_FALSE, 
-      0,
-      BUFFER_OFFSET(0)
-    );
-    glEnableVertexAttribArray(shader.VertColor());
-    glVertexAttribPointer(
-      shader.VertColor(), 
-      4, 
-      GL_FLOAT, 
-      GL_FALSE, 
-      0,
-      BUFFER_OFFSET(AllVertices.size()*sizeof(vec4))
-    );
-    glEnableVertexAttribArray(shader.VertNormal());
-    glVertexAttribPointer(
-      shader.VertNormal(), 
-      4, 
-      GL_FLOAT, 
-      GL_FALSE, 
-      0,
-      BUFFER_OFFSET(AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4))
-    );
-    
-    glBufferData(
-      GL_ARRAY_BUFFER, 
-      AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4) + AllNormals.size()*sizeof(vec4),
-      NULL,
-      GL_STATIC_DRAW
-    );
-    glBufferSubData(
-      GL_ARRAY_BUFFER,
-      0, 
-      AllVertices.size()*sizeof(vec4), AllVertices[0]
-    );
-    glBufferSubData(
-      GL_ARRAY_BUFFER, 
-      AllVertices.size()*sizeof(vec4), 
-      AllColors.size()*sizeof(vec4), 
-      AllColors[0]
-    );
-    glBufferSubData(
-      GL_ARRAY_BUFFER, 
-      AllVertices.size()*sizeof(vec4)+ AllColors.size()*sizeof(vec4), 
-      AllNormals.size()*sizeof(vec4),
-      AllNormals[0]
-    );
-  //
+  sendVertexdata();
   
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.4,0.4,0.4, 1.0); 
+}
+void Scene::sendVertexdata(){
+  glEnableVertexAttribArray(shader.VertPosition());
+  glVertexAttribPointer(
+    shader.VertPosition(), 
+    4, 
+    GL_FLOAT, 
+    GL_FALSE, 
+    0,
+    BUFFER_OFFSET(0)
+  );
+  glEnableVertexAttribArray(shader.VertColor());
+  glVertexAttribPointer(
+    shader.VertColor(), 
+    4, 
+    GL_FLOAT, 
+    GL_FALSE, 
+    0,
+    BUFFER_OFFSET(AllVertices.size()*sizeof(vec4))
+  );
+  glEnableVertexAttribArray(shader.VertNormal());
+  glVertexAttribPointer(
+    shader.VertNormal(), 
+    4, 
+    GL_FLOAT, 
+    GL_FALSE, 
+    0,
+    BUFFER_OFFSET(AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4))
+  );
+  
+  glBufferData(
+    GL_ARRAY_BUFFER, 
+    AllVertices.size()*sizeof(vec4) + AllColors.size()*sizeof(vec4) + AllNormals.size()*sizeof(vec4),
+    NULL,
+    GL_STATIC_DRAW
+  );
+  glBufferSubData(
+    GL_ARRAY_BUFFER,
+    0, 
+    AllVertices.size()*sizeof(vec4), AllVertices[0]
+  );
+  glBufferSubData(
+    GL_ARRAY_BUFFER, 
+    AllVertices.size()*sizeof(vec4), 
+    AllColors.size()*sizeof(vec4), 
+    AllColors[0]
+  );
+  glBufferSubData(
+    GL_ARRAY_BUFFER, 
+    AllVertices.size()*sizeof(vec4)+ AllColors.size()*sizeof(vec4), 
+    AllNormals.size()*sizeof(vec4),
+    AllNormals[0]
+  );
+
 }
 void Scene::draw(){
   //send Camera matrix to gpu
@@ -106,30 +113,36 @@ void Scene::draw(){
   
   shader.setlighting(
     camera.get_eye(),
-    vec4(0,10,0,0),
-    vec4(1,1,1,1),
-    0.5,0.5
+    light->get_position(),
+    lightcolor,
+    ambiantintenstiy,specularintensity
   );
-  
+
+  shader.Shade(false);
+  light->draw();
+
   shader.Shade(true);
   for (auto piece : pieces){
     piece->draw();
   }
 
   board->draw();
+  
+
+  
 }
 void Scene::update(int time){
   float timefactor = time - lasttime;  
 
+  light->updatewithtime(timefactor*2);
+
   for (auto p : pieces){
     //p->update(.15,.04);
-    p->updatewithtime(timefactor*2);
+    p->updatewithtime(timefactor*3);
   }
 
   timesincelastmove += timefactor/1000;
   if (timesincelastmove > rand() % 2 + 2.5 ){computermoveifneeded();}
-  
-
   
   messagequeue.front().displaytimeleft -= timefactor/1000;  
   glutSetWindowTitle(messagequeue.front().message.c_str());
@@ -138,6 +151,28 @@ void Scene::update(int time){
   }
   
   lasttime = time;
+}
+void Scene::changelightcolor(color4 newcolor){
+  lightcolor = newcolor;
+  for (
+    int i = light->posInVAO(); 
+    i < light->posInVAO() + light->GetNumVerts() ; 
+    i++
+  ) // The indecies assoiated with the light 
+  {
+    AllColors[i] = newcolor;
+  }
+  sendVertexdata(); // resend the new color data 
+}
+void Scene::changeambiantintensity(float amount){ 
+  ambiantintenstiy += amount; 
+  if(ambiantintenstiy > 1) ambiantintenstiy = 1;
+  if(ambiantintenstiy < 0) ambiantintenstiy = 0;
+}
+void Scene::changespecularintenstiy(float amount){ 
+  specularintensity += amount; 
+  if(specularintensity > 1) specularintensity =1;
+  if(specularintensity < 0) specularintensity = 0;	
 }
 
 
@@ -154,37 +189,12 @@ void Scene::restart(){
     piece->reset(); // unlinks coordinats from grapical piece
   }
   display_message("Welcome to Othello",7);
-  display_message("Use WASD to move around things around",5);
+  display_message("Use WASD to move around and right click menu to change what this moves.",5);
+  display_message("You can use + and - to change scene parameters check menu for more options" , 5);
   display_message("Your move use left and right arrows", 2);
   animateToinitialplacement();
   animateupdatetonewboard();
   legalmoves = currentlegalmoves();
-}
-
-void Scene::initailpeiceplacement(){
-  static int x,y,z =0;
-  pieces[0]->setposition("e4",true);pieces[0]->settoblack();
-  pieces[1]->setposition("d4",true);pieces[1]->settowhite();
-  pieces[2]->setposition("d5",true);pieces[2]->settoblack();
-  pieces[3]->setposition("e5",true);pieces[3]->settowhite();
-
-  curblackpieceindex = 4; 
-  y = 5;
-  for (long unsigned int i=4; i<pieces.size(); i++){
-    if(i < ((pieces.size()-4)/2 + 4)){
-      z += board->spacesize();
-      x = board->spacesize()*-1;
-      if(i%8 == 0){ z=0; y -= 1;}  
-      pieces[i]->set_position(x,y,z);
-    }else{
-      if(i == 34){y = 5; currentpieceindex = curwhitepieceindex = i;}
-      z += board->spacesize();
-      x = board->spacesize()*8;
-      if(i%8 == 0){ z=0; y -= 1;}  
-      pieces[i]->set_position(x,y,z);
-      pieces[i]->settowhite();
-    }
-  }
 }
 void Scene::animateToinitialplacement(){
   static int x,y,z =0;
@@ -270,11 +280,11 @@ void Scene::animateupdatetonewboard(){
     }
   }
 }
+
 bool Scene::dohavemove(){
   if(legalmoves[0] == "****"){return false;} 
   return true;
 }
-
 void Scene::make_move(){
   if(is_game_over()){
     switch(winning()){
@@ -291,6 +301,7 @@ void Scene::make_move(){
         setupnextpiece();
         animateupdatetonewboard();
         display_message("Black's move",2);
+        currentmoveindex = 0;
       }else{
         display_message("Black has no move" , 10);
       }
@@ -300,10 +311,11 @@ void Scene::make_move(){
       othello::make_move(nextmove); 
       if(dohavemove()){
         currentpiece()->translatetopostion(nextmove,true);
-          legalmoves = currentlegalmoves();
-          setupnextpiece();
-          animateupdatetonewboard();
-          display_message("Your move use left and right arrows",2);
+        legalmoves = currentlegalmoves();
+        setupnextpiece();
+        animateupdatetonewboard();
+        display_message("Your move use left and right arrows",2);
+        currentmoveindex= 0;
       }else{
         display_message("You have no move" , 5);
       }
@@ -311,7 +323,6 @@ void Scene::make_move(){
     timesincelastmove = 0;
   }
 }
-
 void Scene::setupnextpiece(){
   if(currentpieceindex == curwhitepieceindex){
     currentpieceindex = curblackpieceindex;
@@ -321,10 +332,10 @@ void Scene::setupnextpiece(){
     curblackpieceindex++;
   }
 }
-
 Piece* Scene::currentpiece(){
   return pieces[currentpieceindex];
 }
+
 std::vector<string> Scene::currentlegalmoves(){ 
   std::queue<string> legalmoves;
   compute_moves(legalmoves); 

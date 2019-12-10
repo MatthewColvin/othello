@@ -27,6 +27,7 @@ struct gamemessage{
 class Scene : private main_savitch_14::othello{
 	public:
 		void init();
+		void sendVertexdata();
 		void draw();
 		void update(int elapsedtime);
 		
@@ -37,7 +38,6 @@ class Scene : private main_savitch_14::othello{
 			void display_status(bool printTerminalBoard);
 			void make_move();
 			void restart();
-				void initailpeiceplacement();
 				void animateToinitialplacement();
 		//
 
@@ -47,8 +47,12 @@ class Scene : private main_savitch_14::othello{
 		Shader shader;
 		vector<Piece*> pieces;
 		Board *board;
-
-
+		
+		sphere* light;
+			void changelightcolor(color4 newcolor);
+			void changeambiantintensity(float amount);
+			void changespecularintenstiy(float amount);
+			
 		Piece* currentpiece();
 
 		void translatepiecetonextlegalpostition();
@@ -59,6 +63,12 @@ class Scene : private main_savitch_14::othello{
 		vector<color4> AllColors;
 		vector<norm4> AllNormals;
 		unsigned int lasttime=0; // gets updated everytime update is called
+		// Light model 
+			color4 lightcolor = color4(1,1,1,1);
+			float ambiantintenstiy = 0.5;
+			float specularintensity = 0.5;
+		//
+		
 		//piece movement 
 			void updatetonewboard();
 			void animateupdatetonewboard();
