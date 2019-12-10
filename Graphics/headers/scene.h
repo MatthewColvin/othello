@@ -27,10 +27,10 @@ struct gamemessage{
 class Scene : private main_savitch_14::othello{
 	public:
 		void init();
-		void sendVertexdata();
+			void sendVertexdata();
+		//
 		void draw();
 		void update(int elapsedtime);
-		
 		
 		// Old othello class functions
 			void display_message(std::string message ,float timetodisplay) ;
@@ -52,12 +52,16 @@ class Scene : private main_savitch_14::othello{
 			void changelightcolor(color4 newcolor);
 			void changeambiantintensity(float amount);
 			void changespecularintenstiy(float amount);
-			
+		//	
+
 		Piece* currentpiece();
 
 		void translatepiecetonextlegalpostition();
 		void translatepiecetopreviouslegalpostion();
 
+		void changepeicestranslationspeed(float amount);
+		void changpiecesrotationspeed(float amount);
+  
 	private:
 		vector<point4> AllVertices;
 		vector<color4> AllColors;

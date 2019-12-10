@@ -8,7 +8,6 @@
 #include "piece.h"
 #include <unistd.h>
 #include <queue>
-
 #include <stdio.h>
 
 
@@ -152,29 +151,30 @@ void Scene::update(int time){
   
   lasttime = time;
 }
-void Scene::changelightcolor(color4 newcolor){
-  lightcolor = newcolor;
-  for (
-    int i = light->posInVAO(); 
-    i < light->posInVAO() + light->GetNumVerts() ; 
-    i++
-  ) // The indecies assoiated with the light 
-  {
-    AllColors[i] = newcolor;
+////// Pararmetes for editing in menu //////////
+  void Scene::changelightcolor(color4 newcolor){
+    lightcolor = newcolor;
+    for (
+      int i = light->posInVAO(); 
+      i < light->posInVAO() + light->GetNumVerts() ; 
+      i++
+    ) // The indecies assoiated with the light 
+    {
+      AllColors[i] = newcolor;
+    }
+    sendVertexdata(); // resend the new color data 
   }
-  sendVertexdata(); // resend the new color data 
-}
-void Scene::changeambiantintensity(float amount){ 
-  ambiantintenstiy += amount; 
-  if(ambiantintenstiy > 1) ambiantintenstiy = 1;
-  if(ambiantintenstiy < 0) ambiantintenstiy = 0;
-}
-void Scene::changespecularintenstiy(float amount){ 
-  specularintensity += amount; 
-  if(specularintensity > 1) specularintensity =1;
-  if(specularintensity < 0) specularintensity = 0;	
-}
-
+  void Scene::changeambiantintensity(float amount){ 
+    ambiantintenstiy += amount; 
+    if(ambiantintenstiy > 1) ambiantintenstiy = 1;
+    if(ambiantintenstiy < 0) ambiantintenstiy = 0;
+  }
+  void Scene::changespecularintenstiy(float amount){ 
+    specularintensity += amount; 
+    if(specularintensity > 1) specularintensity =1;
+    if(specularintensity < 0) specularintensity = 0;	
+  }
+////////////////////////////////////////////////
 
 void Scene::display_status(bool printTerminalBoard){
   if (printTerminalBoard){
@@ -335,6 +335,13 @@ void Scene::setupnextpiece(){
 Piece* Scene::currentpiece(){
   return pieces[currentpieceindex];
 }
+void Scene::changepeicestranslationspeed(float amount){
+
+}
+void Scene::changpiecesrotationspeed(float amount){
+
+}
+
 
 std::vector<string> Scene::currentlegalmoves(){ 
   std::queue<string> legalmoves;
@@ -386,12 +393,15 @@ void Scene::computermoveifneeded(){
     Scene::make_move();
   }
 }
-void Scene::display_message(std::string newtitle ,float timetodisplay ) {
-  gamemessage nextmessage(newtitle,timetodisplay);
-  messagequeue.push(nextmessage);
-}
-void Scene::display_message(std::string newtitle) {
-  while(!messagequeue.empty()) messagequeue.pop(); // empty message queue
-  gamemessage onlymessage(newtitle,1);
-  messagequeue.push(onlymessage);
-}
+
+// In game messages ///////////////////////////
+  void Scene::display_message(std::string newtitle ,float timetodisplay ) {
+    gamemessage nextmessage(newtitle,timetodisplay);
+    messagequeue.push(nextmessage);
+  }
+  void Scene::display_message(std::string newtitle) {
+    while(!messagequeue.empty()) messagequeue.pop(); // empty message queue
+    gamemessage onlymessage(newtitle,1);
+    messagequeue.push(onlymessage);
+  }
+///////////////////////////////////////////////

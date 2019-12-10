@@ -20,12 +20,13 @@ float lookaroundsensetivity=0.0008;
   float currentpiecemovemntamnt = 1;
   float stepsize = 0.1; 
 
-  enum {Light, CurrentPiece, Camera};
-  int WASDmoving = Camera;
+  enum {Light, CurrentPiece, camera};
+  int WASDmoving = camera;
 // Controlling parameters in scene with + and - keys
-  enum{SpecularLight, DiffuseLight};
+  enum{SpecularLight, DiffuseLight, PieceTranslationSpeed, PieceRotationSpeed};
   int plusminuscontrols = DiffuseLight;
 //
+
 
 
 extern "C" void display();
@@ -47,7 +48,7 @@ void objectcontrol(int num){
   switch (num) {
     case (1): WASDmoving = Light;        break;
     case (2): WASDmoving = CurrentPiece; break;
-    case (3): WASDmoving = Camera;       break;
+    case (3): WASDmoving = camera;       break;
   }
   glutPostRedisplay();
 } 
@@ -86,7 +87,7 @@ void createMenu(void){
   int gameoptions = glutCreateMenu(menu);
     glutAddMenuEntry("Disable",1);
     glutAddMenuEntry("Enable",2);
-  int menu_id = glutCreateMenu(menu);
+  glutCreateMenu(menu);
     glutAddSubMenu("Object to control", objectcontrolsubmenuid);
     glutAddSubMenu("Light Control",lightcontolsubmenuid);
     glutAddMenuEntry("Disco Othello", gameoptions);
@@ -126,9 +127,15 @@ extern "C" void idleanimation(){
     string piece0locdebug = peiceloc.str();
   ///////////////////////////////////////////////
 
-  // scene.display_message(eyeatdebug,true);
-  // scene.display_message(camanglesdebug,true);
-  // scene.display_message(piece0locdebug,true);
+  ///// Light location //////////////////////////
+    stringstream lightloc;
+    lightloc << scene.light->get_position() << std::endl;
+  ///////////////////////////////////////////////
+
+  // scene.display_message(cameye.str() + lightloc.str());
+  // scene.display_message(eyeatdebug);
+  // scene.display_message(camanglesdebug);
+  // scene.display_message(piece0locdebug);
   
   scene.update(time);
 
@@ -142,7 +149,7 @@ extern "C" void special(int key, int x, int y){
 }
 extern "C" void keyboard(unsigned char key, int x, int y){
   switch (WASDmoving){
-    case(Camera): switch(key){
+    case(camera): switch(key){
       case 'w': scene.camera.moveforward(stepsize); break;
       case 's': scene.camera.moveback(stepsize);    break;
       case 'a': scene.camera.moveright(stepsize); break;
