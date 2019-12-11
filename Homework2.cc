@@ -91,10 +91,11 @@ void createMenu(void){
   int gameoptions = glutCreateMenu(menu);
     glutAddMenuEntry("Restart Game",1);
     glutAddMenuEntry("Display terminal Board",2);
-  glutCreateMenu(menu);
+    
+    glutCreateMenu(menu);
     glutAddSubMenu("Object to control", objectcontrolsubmenuid);
     glutAddSubMenu("Light Control",lightcontolsubmenuid);
-    glutAddMenuEntry("Game options", gameoptions);
+    glutAddSubMenu("Game options", gameoptions);
     glutAddMenuEntry("Quit", 0);     
   
   glutAttachMenu(GLUT_RIGHT_BUTTON);
