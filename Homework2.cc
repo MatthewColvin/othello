@@ -202,6 +202,8 @@ extern "C" void keyboard(unsigned char key, int x, int y){
   //033 escape key
   case 033: exit(EXIT_SUCCESS);break;
   
+  case 'R' : scene.restart(); break;
+
   case ' ':  scene.make_move();  break;
   }
 
