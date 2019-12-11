@@ -26,12 +26,12 @@ namespace main_savitch_14
 		virtual void restart();
 		virtual who winning()const;
 		virtual std::string get_user_move()const;
-		
+	
 	private:
 		std::string pre_move;
-		space board[8][8];
 		int skip;
-		
+	protected:
+		space board[8][8];
 		// board[rows][coloums] very important
 	};
 }

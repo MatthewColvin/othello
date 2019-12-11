@@ -660,9 +660,8 @@ namespace main_savitch_14
 		board[3][3].make_white();
 		board[4][3].make_black();
 		board[4][4].make_white();
-
-
-
+		
+		skip = 0;
 	}
 
 	othello::who othello::winning() const
@@ -688,8 +687,8 @@ namespace main_savitch_14
 		queue<string> moves;
 		compute_moves(moves);
 		if(moves.size()== 1 && moves.front() == "****"){
-		cout<<"NO MOVES"<<endl;
-		return moves.front();
+			cout<<"NO MOVES"<<endl;
+			return moves.front();
 		}
 		
 		string answer;
@@ -699,5 +698,4 @@ namespace main_savitch_14
 		return answer;
 	}
 
-	
 }
