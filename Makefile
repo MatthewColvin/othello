@@ -24,7 +24,7 @@ LDLIBS = -lGL -lGLU  -lGLEW /usr/lib/x86_64-linux-gnu/libglut.so.3
 #LDLIBS = -lGL -lGLU  -lGLEW -lGLUT
 
 # program to link in compiling all binaries that initialize shaders
-InitShader = /home/mcolvin/Desktop/othello/Graphics/angel/Common/InitShader.o
+InitShader = ./Graphics/angel/Common/InitShader.o
 
 # Where to find the include files
 INCS = -I /usr/include/ -I $(angel) -I $(headerpth) -I $(gamelogicpth)
